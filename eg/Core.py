@@ -219,15 +219,15 @@ def RegisterPlugin(
     name = None,
     description = None,
     kind = "other",
-    author = "[unknown author]",
-    version = "[unknown version]",
+    author = "",
+    version = "",
     icon = None,
     canMultiLoad = False,
     createMacrosOnAdd = False,
     url = None,
     help = None,
     guid = None,
-    **kwargs
+    *args, **kwargs
 ):
     """
     Registers information about a plugin to EventGhost.

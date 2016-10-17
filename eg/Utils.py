@@ -36,6 +36,7 @@ import eg
 
 __all__ = [
     "Bunch", "NotificationHandler", "LogIt", "LogItWithReturn", "TimeIt",
+    "LogItNoArgs", "LogItNoArgsWithReturn",
     "AssertInMainThread", "AssertInActionThread", "ParseString", "SetDefault",
     "EnsureVisible", "VBoxSizer", "HBoxSizer", "EqualizeWidths", "AsTasklet",
     "ExecFile", "GetTopLevelWindow",
@@ -408,6 +409,22 @@ def LogIt(func):
         return func(*args, **kwargs)
     return update_wrapper(LogItWrapper, func)
 
+
+def LogItNoArgs(func):
+    """Logs the function call, if eg.debugLevel is set."""
+    if not eg.debugLevel:
+        return func
+
+    if func.func_code.co_flags & 0x20:
+        raise TypeError("Can't wrap generator function")
+
+    def LogItWrapper(*args, **kwargs):
+        funcName, argString = GetFuncArgString(func, args, kwargs)
+        eg.PrintDebugNotice(funcName)
+        return func(*args, **kwargs)
+    return update_wrapper(LogItWrapper, func)
+
+
 def LogItWithReturn(func):
     """
     Logs the function call and return, if eg.debugLevel is set.
@@ -422,6 +439,21 @@ def LogItWithReturn(func):
         eg.PrintDebugNotice(funcName + " => " + repr(result))
         return result
     return update_wrapper(LogItWithReturnWrapper, func)
+
+
+def LogItNoArgsWithReturn(func):
+    """Logs the function call and return, if eg.debugLevel is set."""
+    if not eg.debugLevel:
+        return func
+
+    def LogItWithReturnWrapper(*args, **kwargs):
+        funcName, argString = GetFuncArgString(func, args, kwargs)
+        eg.PrintDebugNotice(funcName + argString if args else "")
+        result = func(*args, **kwargs)
+        eg.PrintDebugNotice(funcName + " => " + repr(result))
+        return result
+    return update_wrapper(LogItWithReturnWrapper, func)
+
 
 def ParseString(text, filterFunc=None):
     start = 0

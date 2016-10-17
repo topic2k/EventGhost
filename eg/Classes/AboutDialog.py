@@ -351,7 +351,7 @@ def GetPluginAuthors():
     containing all plugin names of the author.
     """
     pluginAuthors = {}
-    for pluginInfo in eg.pluginManager.database.itervalues():
+    for pluginInfo in eg.pluginManager.GetPluginInfoList():
         pluginName = pluginInfo.name.replace(" ", "&nbsp;")
         for part in re.split("\s*(?:&|,|\+|/|and)\s*", pluginInfo.author):
             author = part.strip()

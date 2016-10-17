@@ -20,8 +20,10 @@ import os
 import sys
 from os.path import exists, join
 
-# Local imports
+from pkg_resources import parse_version
+
 import eg
+
 
 class PluginModuleInfo(object):
     """
@@ -33,24 +35,45 @@ class PluginModuleInfo(object):
     """
     name = u"Unknown Plugin"
     description = u""
-    author = u"[unknown author]"
-    version = u"[unknown version]"
+    author = u""
+    version = u""
     kind = u"other"
     guid = ""
     canMultiLoad = False
     createMacrosOnAdd = False
     icon = eg.Icons.PLUGIN_ICON
     url = None
-    englishName = None
-    englishDescription = None
+    englishName = None  # TODO: needed why? (topic2k)
+    englishDescription = None  # TODO: needed why? (topic2k)
     path = None
     pluginName = None
     hardwareId = ""
     valid = False
+    # --- new ---
+    longDescription = None
+    pluginHelp = ""
+    egVersion = ">={0}.{1}".format(eg.Version.major, eg.Version.minor)  # use pip versionChecker (e.g. >0.4.0, <0.6.0)
+    egMinVersion = "0.0.0"
+    egMaxVersion = "999.999.999"
+    experimental = False
+    deprecated = False
+    issuesUrl = None
+    codeUrl = None
+    changelog = None
+    versionAvailable = ""
+    zipRepository = ""
+    download_url = None
+    filename = ""
+    available = False  # Will be overwritten, if any available version found.
+    installed = False
+    status = "unknown"  # Will be overwritten, if any available version found.
+    dependencies = None
 
-    def __init__(self, path):
+    def __init__(self, path, local_plugin=True):
         self.description = self.path = path
         self.name = self.pluginName = os.path.basename(path)
+        if not local_plugin:
+            return
         originalRegisterPlugin = eg.RegisterPlugin
         eg.RegisterPlugin = self.RegisterPlugin
         sys.path.insert(0, self.path)
@@ -60,12 +83,15 @@ class PluginModuleInfo(object):
             else:
                 moduleName = "eg.UserPluginModule." + self.pluginName
             if moduleName in sys.modules:
+                # TODO: (topic2k) will this overwrite python modules?
+                # why is it needed?
                 del sys.modules[moduleName]
             __import__(moduleName, None, None, [''])
-        except RegisterPluginException:
+        except eg.Exceptions.RegisterPluginException:
             # It is expected that the loading will raise
             # RegisterPluginException because eg.RegisterPlugin() is called
             # inside the module
+            self.status = "installed"
             self.valid = True
         except:
             if eg.debugLevel:
@@ -86,9 +112,9 @@ class PluginModuleInfo(object):
         self,
         name = None,
         description = None,
-        kind = "other",
-        author = "[unknown author]",
-        version = "[unknown version]",
+        kind = u"other",
+        author = u"",
+        version = u"",
         icon = None,
         canMultiLoad = False,
         createMacrosOnAdd = False,
@@ -96,13 +122,53 @@ class PluginModuleInfo(object):
         help = None,
         guid = "",
         hardwareId = "",
+        # --- new ---
+        longDescription=None,
+        experimental=False,
+        deprecated=False,
+        issuesUrl=None,
+        codeUrl=None,
+        pluginHelp=None,
+        egVersion = ">={0}.{1}".format(eg.Version.major, eg.Version.minor),  # use pip versionChecker (e.g. >0.4.0, <0.6.0)
+        egMinVersion="0.0.0",
+        egMaxVersion="999.999.999",
+        changelog=None,
         **kwargs
     ):
-        if name is None:
+        self.experimental = experimental
+        self.deprecated = deprecated
+        self.issuesUrl = issuesUrl
+        self.codeUrl = codeUrl
+        self.egVersion = egVersion
+        self.egMinVersion = egMinVersion
+        self.egMaxVersion = egMaxVersion
+        self.changelog = changelog
+        self.versionAvailable = ""
+        self.zipRepository = ""
+        self.download_url = self.path
+        self.filename = ""
+        self.available = False  # Will be overwritten, if any available version found.
+        self.installed = False
+        self.status = "unknown"  # Will be overwritten, if any available version found.
+        self.dependencies = None
+
+        # Mark core plugins as readonly
+        self.readOnly = self.path.startswith(eg.pluginDirs[0])
+
+        if pluginHelp and not longDescription:
+            self.longDescription = pluginHelp
+        else:
+            self.longDescription = longDescription
+        if pluginHelp:
+            pluginHelp = "\n".join([s.strip() for s in pluginHelp.splitlines()])
+            pluginHelp = pluginHelp.replace("\n\n", "<p>")
+            description += "\n\n<p>" + pluginHelp
+
+        if not name:
             name = self.pluginName
-        if description is None:
+        if not description:
             description = name
-        if help is not None:
+        if help:
             help = "\n".join([s.strip() for s in help.splitlines()])
             help = help.replace("\n\n", "<p>")
             description += "\n\n<p>" + help
@@ -113,7 +179,18 @@ class PluginModuleInfo(object):
             unicode(", ".join(author)) if isinstance(author, tuple)
             else unicode(author)
         )
+        error = None
+        errorDetails = None
+        eg_min = parse_version(egMinVersion)
+        eg_max = parse_version(egMaxVersion)
+        eg_ver = parse_version(eg.Version.base)
+        if not (eg_min <= eg_ver <= eg_max):
+            error = "incompatible"
+            errorDetails = "{0} - {1}".format(egMinVersion, egMaxVersion)
+        self.error = error
+        self.error_details = errorDetails
         self.version = unicode(version)
+
         self.canMultiLoad = canMultiLoad
         self.createMacrosOnAdd = createMacrosOnAdd
         self.url = unicode(url) if url else url  # Added by Pako
@@ -123,7 +200,7 @@ class PluginModuleInfo(object):
             self.guid = self.pluginName
         self.hardwareId = hardwareId.upper()
         # get the icon if any
-        if icon is not None:
+        if icon:
             self.icon = eg.Icons.StringIcon(icon)
         else:
             iconPath = join(self.path, "icon.png")
@@ -138,12 +215,4 @@ class PluginModuleInfo(object):
 
         # we are done with this plugin module, so we can interrupt further
         # processing by raising RegisterPluginException
-        raise RegisterPluginException
-
-
-class RegisterPluginException(Exception):
-    """
-    RegisterPlugin will raise this exception to interrupt the loading
-    of the plugin module file.
-    """
-    pass
+        raise eg.Exceptions.RegisterPluginException

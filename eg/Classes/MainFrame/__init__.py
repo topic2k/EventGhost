@@ -291,6 +291,8 @@ class MainFrame(wx.Frame):
         # edit menu
         menu = wx.Menu()
         menuBar.Append(menu, text.EditMenu)
+        Append("PluginManager")
+        menu.AppendSeparator()
         Append("Undo", "\tCtrl+Z")
         Append("Redo", "\tCtrl+Y")
         menu.AppendSeparator()
@@ -826,6 +828,10 @@ class MainFrame(wx.Frame):
 
     def OnCmdCopy(self):
         self.DispatchCommand("OnCmdCopy")
+
+    @eg.AsTasklet
+    def OnCmdPluginManager(self):
+        eg.pluginManager.ShowPluginManager(self)
 
     def OnCmdPython(self):
         self.DispatchCommand("OnCmdPython")
