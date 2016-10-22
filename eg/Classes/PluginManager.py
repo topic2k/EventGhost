@@ -30,17 +30,13 @@ import requests
 import wx
 import wx.html
 import wx.html2
-import wx.lib.agw.infobar as IB
-import wx.lib.agw.ultimatelistctrl as ULC
 import wx.lib.newevent
 import wx.richtext
 import xmltodict
 from pkg_resources import parse_version
-from wx.lib.splitter import MultiSplitterWindow
 
 import eg
-
-PM_NAME = eg.APP_NAME + " Plugin Manager"
+from .PluginManagerSettings import Config, PLUGIN_DETAILS_HTML_STYLE, PM_NAME
 
 OFFICIAL_REPO = {
     # human readable repository name
@@ -68,157 +64,6 @@ REPO_STATE_REQ_FETCHING = 3
 REPO_STATE_REJECTED = 4
 REPO_STATE_ERROR = 5  # to be retrieved (3)
 
-UPDATE_CHECK_INTERVAL = [0, 1, 3, 7, 14, 30]
-UPDATE_CHECK_CHOICES = [
-    "on every call of PluginManager",
-    "once a day",
-    "every 3 days",
-    "every week",
-    "every 2 weeks",
-    "every month"
-]
-
-ID_REPO_LIST = wx.ID_HIGHEST + 1
-ID_REPO_RELOAD = wx.ID_HIGHEST + 2
-ID_REPO_ADD = wx.ID_HIGHEST + 3
-ID_REPO_EDIT = wx.ID_HIGHEST + 4
-ID_REPO_DELETE = wx.ID_HIGHEST + 5
-ID_VIEW = wx.ID_HIGHEST + 6
-ID_PLUGIN_LIST = wx.ID_HIGHEST + 7
-ID_PLUGIN_FILTER = wx.ID_HIGHEST + 8
-ID_UPGRADE_ALL = wx.ID_HIGHEST + 9
-ID_UNINSTALL = wx.ID_HIGHEST + 10
-ID_INSTALL = wx.ID_HIGHEST + 11
-ID_PLUGIN_DETAILS = wx.ID_HIGHEST + 12
-ID_INTERVALL = wx.ID_HIGHEST + 13
-ID_EXPERIMENTAL = wx.ID_HIGHEST + 14
-ID_DEPRECATED = wx.ID_HIGHEST + 15
-ID_UPDATE_CHECK = wx.ID_HIGHEST + 16
-
-LB_SORT_ASCENDING = 1
-LB_SORT_DESCENDING = 2
-LB_SORT_BY_NAME = 4
-LB_SORT_BY_DOWNLOADS = 8
-LB_SORT_BY_VOTE = 16
-LB_SORT_BY_STATUS = 32
-LB_SORT_BY_RELEASE_DATE = 64
-
-tabInfoHTML = "<style> body, table { margin:4px; " \
-              "font-family:verdana; font-size:12px; " \
-              "} </style>"
-tabDescriptions = [
-    # must match the choices in ListBox
-    # 0 = all plugins
-    # 1 = installed plugins
-    # 2 = not installed plugins
-    # 3 = upgradeable plugins
-    # 4 = new plugins
-    # 5 = invalid plugins
-
-######  all_plugins  #####
-"""<h3>All Plugins</h3>
-<p>
-On the left you see the list of all plugins available for your EventGhost,
-both installed and available for download. Some plugins come with your
-EventGhost installation while most of them are made available via
-the plugin repositories.
-</p>
-
-<p>
-You can temporarily enable or disable a plugin.
-To <i>enable</i> or <i>disable</i> a plugin, click its checkbox
-or doubleclick its name...
-</p>
-
-<p>
-Plugins showing in <span style='color:red'>red</span> are not loaded
-because there is a problem. They are also listed on the 'Invalid' tab.
-Click on the plugin name to see more details, or to reinstall or
-uninstall this plugin.
-</p>\
-""",
-
-#####  installed plugins  #####
-"""<h3>Installed Plugins</h3>
-
-<p>
-Here you only see plugins <b>installed</b> in EventGhost.
-</p>
-<p>
-Click on the name to see details.
-</p>
-<p>
-Click the checkbox or doubleclick the name to <i>activate</i> or
-<i>deactivate</i> the plugin.
-</p>
-<p>
-You can change the sorting via the context menu (right click).
-</p>
-""",
-
-#####  not installed plugins  #####
-"""<h3>Not installed plugins</h3>
-
-<p>
-Here you see the list of all plugins available in the repositories, but
-which are <b>not yet installed</b>.
-</p>
-<p>
-Click on the name to see details.
-</p>
-<p>
-You can change the sorting via the context menu (right click).
-</p>
-<p>
-A plugin can be downloaded and installed by clicking on it's name, and
-then click the 'Install plugin' button.
-</p>
-""",
-
-#####  upgradeable plugins  #####
-"""<h3>Upgradable plugins</h3>
-
-<p>
-Here are <b>upgradeable plugins</b>. It means more recent versions of installed
-plugins are available in the repositories.
-</p>
-""",
-
-#####  new plugins  #####
-"""<h3>New plugins</h3>
-
-<p>
-Here you see <b>new</b> plugins which were released
-since you last visited this list.
-</p>
-""",
-
-#####  invalid plugins  #####
-"""<h3>Invalid plugins</h3>
-
-<p>
-Plugins in this list here are <b>broken or incompatible</b> with your
-version of EventGhost.
-</p>
-
-<p>
-Click on an individual plugin; if possible EventGhost shows you more information.
-</p>
-
-<p>
-The main reasons to have invalid plugins is that this plugin is not build
-for this version of EventGhost. Maybe you can download another version
-from <a href="http://www.eventghost.net/downloads/">www.eventghost.net</a>.
-</p>
-
-<p>
-Another common reason is that a plugin needs some external python
-libraries (dependencies). You can install them yourself, depending on
-your operating system. After a correct install, the plugin should work.
-</p>
-""",
-]
-
 
 CheckingDone, EVT_CHECKING_DONE = wx.lib.newevent.NewEvent()
 AnythingChanged, EVT_ANYTHING_CHANGED = wx.lib.newevent.NewEvent()
@@ -241,24 +86,13 @@ def remove_plugin_dir(path, parent=None):
         shutil.rmtree(path, onerror=onError)
 
 
-class Config(eg.PersistentData):
-    repositories = []
-    #check_on_EG_start = True
-    check_on_show_PM = True
-    check_interval = 0  # allowed values: 0,1,3,7,14,30 days
-    last_start = None  # ISO formated date string
-    allow_experimental = False
-    allow_deprecated = False
-    seen_plugins = []  # TODO: empty list on EG exit and/or daily? other way to handle it?
-
-
+@eg.AssertInMainThread
 class PluginManager:
     """
     The main class for managing the plugin installer stuff.
     """
     def __init__(self):
         self.plugins = PluginCache()
-        self.InitGUI(None)
 
     def GetPluginInfoList(self):
         return self.plugins.GetPluginInfoList()
@@ -266,17 +100,17 @@ class PluginManager:
     def GetPluginInfo(self, guid):
         return self.plugins.GetPluginInfo(guid)
 
-    def OpenPlugin(self, ident, evalName, args, treeItem=None):
-        moduleInfo = self.plugins.GetPluginInfo(ident)
+    def OpenPlugin(self, guid, evalName, args, treeItem=None):
+        moduleInfo = self.plugins.GetPluginInfo(guid)
         if moduleInfo is None:
             # we don't have such plugin
-            clsInfo = NonexistentPluginInfo(ident, evalName)
+            clsInfo = NonexistentPluginInfo(guid, evalName)
         else:
             try:
                 clsInfo = eg.PluginInstanceInfo.FromModuleInfo(moduleInfo)
             except eg.Exceptions.PluginLoadError:
                 if evalName:
-                    clsInfo = NonexistentPluginInfo(ident, evalName)
+                    clsInfo = NonexistentPluginInfo(guid, evalName)
                 else:
                     raise
         info = clsInfo.CreateInstance(args, evalName, treeItem)
@@ -285,13 +119,15 @@ class PluginManager:
         return info
 
     def ShowPluginManager(self, mainFrame=None):
-        self.repositories = Repositories(self.gui, self.plugins)
+        self.repositories = Repositories(self.plugins)
         self.repositories.FetchRepositories()
         self.LookForObsoletePlugins()
         self.fetchAvailablePlugins(reloadMode=False)
-        self.exportRepositoriesToManager()
-        self.exportPluginsToManager()
-        self.gui.Show()
+        eg.pluginManagerDialog.UpdateRepositoriesList(self.repositories)
+        eg.pluginManagerDialog.UpdatePluginList()
+        eg.pluginManagerDialog.Show()
+        Config.last_start = wx.DateTime().Today().FormatISODate()
+
 
     def LookForObsoletePlugins(self):
         """
@@ -355,61 +191,216 @@ class PluginManager:
         self.plugins.rebuild()
 
     @eg.LogIt
-    def exportRepositoriesToManager(self):
-        """ Update manager's repository tree widget with current data """
-        repositories = self.repositories
-        lst = self.gui.lstRepo
-        lst.DeleteAllItems()
-        all_repos = repositories.GetAllRepos()
-        for key in all_repos:
-            url = all_repos[key]["url"] + repositories.GetUrlParameters()
+    def OnPluginSelected(self, event):
+        # guid = event.ClientData
+        # if not guid:
+        guid = event.GetData()
 
-            itemData = {
-                "name": key,
-                "url": url,
-                "enabled": all_repos[key]["enabled"],
-                "valid": all_repos[key]["valid"] and "true" or "false",
-                "state": str(all_repos[key]["state"]),
-                "error": all_repos[key].get("error",""),
-            }
-            item = lst.Append([itemData["state"], itemData["name"], itemData["url"]])
-            lst.GetItem(item).SetPyData(itemData)
-        #lst.SetColumnWidth(0, ULC.ULC_AUTOSIZE)
-        lst.SetColumnWidth(1, ULC.ULC_AUTOSIZE)
-        lst.SetColumnWidth(2, ULC.ULC_AUTOSIZE_FILL)
+        html = PLUGIN_DETAILS_HTML_STYLE
+        plugin_info = self.plugins.plugin_cache[guid]
+        if not plugin_info:
+            html += "<h3><i>No details available</i></h3>"
+            eg.pluginManagerDialog.ShowPluginDetails(html)
+            eg.pluginManagerDialog.EnableButton("PM_btn_Install", False)
+            eg.pluginManagerDialog.EnableButton("PM_btn_Uninstall", False)
+            return
 
-    @eg.LogIt
-    def exportPluginsToManager(self):
-        self.UpdatePluginListBox(self.plugins.all())
+        # html = "<style> body, table { padding:0px; margin:0px;" \
+        #        "font-family:verdana; font-size: 12px; } div#votes {" \
+        #        "width:360px; margin-left:98px; padding-top:3px; } </style>"
 
-    @eg.LogItNoArgs
-    def UpdatePluginListBox(self, plugins):
-        self.gui.UpdateList(self.plugins.pluginsToShow(plugins.copy()))
+        # First prepare message box(es)
+        if plugin_info.error:
+            if plugin_info.error == "incompatible":
+                error_msg = "<b>{0}</b><br/>{1}".format(
+                    "This plugin is incompatible with this version "
+                    "of {0}".format(eg.APP_NAME),
+                    "Plugin is designed for "
+                    "{0} {1}".format(eg.APP_NAME, plugin_info.error_details))
+            elif plugin_info.error == "dependent":
+                error_msg = "<b>{0}:</b><br/>{1}".format(
+                    "This plugin requires a missing module",
+                    plugin_info.error_details)
+            else:
+                error_msg = "<b>{0}</b><br/>{1}".format(
+                    "This plugin is broken",
+                    plugin_info.error_details)
+            html += '<table bgcolor="#FFFF88" cellspacing="2" ' \
+                'cellpadding="6" width="100%">' \
+                '<tr><td width="100%" style="color:#CC0000">' \
+                '{0}</td></tr></table>'.format(error_msg)
+
+        if plugin_info.status == "upgradeable":
+            html += '<table bgcolor="#FFFFAA" cellspacing="2" ' \
+                    'cellpadding="6" width="100%">' \
+                    '<tr><td width="100%" style="color:#880000">' \
+                    '<b>{0}</b></td></tr>' \
+                    '</table>'.format("There is a new version available")
+        if plugin_info.status == "new":
+            html += '<table bgcolor="#CCFFCC" cellspacing="2" ' \
+                    'cellpadding="6" width="100%">' \
+                     '<tr><td width="100%" style="color:#008800">' \
+                     '<b>{0}</b></td></tr>' \
+                    '</table>'.format("This is a new plugin")
+        if plugin_info.status == "newer":
+            html += '<table bgcolor="#FFFFCC" cellspacing="2" ' \
+                    'cellpadding="6" width="100%">' \
+                     '<tr><td width="100%" style="color:#550000; ' \
+                    'vertical-align:middle">' \
+                    '<b>{0}</b></td></tr></table>'.format(
+                    "Installed version of this plugin is higher than"
+                    " any version found in repository")
+
+        if plugin_info.experimental:
+            icn = os.path.join(eg.imagesDir, "pluginExperimental.png")
+            html += '<table bgcolor="#EEEEBB" cellspacing="2" ' \
+                    'cellpadding="2" width="100%">' \
+                    '<tr><td><img src="file://{1}" width="32"></td>' \
+                    '<td width="100%" style="color:#660000; vertical-align:' \
+                    'middle"><b>{0}</b></td></tr></table>'.format(
+                    "This plugin is experimental", icn)
+
+        if plugin_info.deprecated:
+            icn = os.path.join(eg.imagesDir, "pluginDeprecated.png")
+            html += '<table bgcolor="#EEBBCC" cellspacing="2" ' \
+                    'cellpadding="2" width="100%">' \
+                    '<tr><td><img src="file://{1}" width="32"></td>' \
+                    '<td width="100%" style="color:#660000; vertical-align: ' \
+                    'middle"><b>{0}</b></td></tr></table>'.format(
+                    "This plugin is deprecated", icn)
+
+        # Now the metadata
+        html += '<table cellspacing="4" width="100%"><tr><td ' \
+                'valign="middle"><h1>&nbsp;'
+        path = plugin_info.library
+        icon = plugin_info.icon
+        if icon is None:
+            icon = eg.Icons.PLUGIN_ICON.key
+        elif isinstance(icon, (eg.Icons.PathIcon, eg.Icons.StringIcon)):
+            icon = icon.key
+        if os.path.exists(icon) and os.path.isfile(icon):
+            iconPath = "file://{0}".format(icon.replace('\\', '/'))
+            html += '<img src="{0}">&nbsp;'.format(iconPath)
+        else:
+            src = '<img src="data:image/gif;base64,\n' + icon
+            html += src + '">&nbsp;'
+
+        html += "{0}</h1>".format(plugin_info.name)
+        try:
+            html += "<h5>{0}</h5>".format(plugin_info.description)
+        except UnicodeEncodeError:
+            html += "<h5>{0}</h5>".format(repr(plugin_info.description))
+
+        if plugin_info.longDescription:
+            about = plugin_info.longDescription
+            html += about#.replace('\n', "<br/>")
+
+        html += "<br/><br/>"
+        if plugin_info.kind:
+            html += "{0}: {1} <br/>".format("Kind", plugin_info.kind)
+        # if metadata["tags"]:
+        #     html += "{0}: {1} <br/>".format("Tags", metadata["tags"])
+        if plugin_info.url or plugin_info.issuesUrl or plugin_info.codeUrl:
+            html += "{0}: ".format("More info")
+            if plugin_info.url:
+                html += "<a href='{0}'>{1}</a> &nbsp; ".format(
+                    plugin_info.url, "url")
+            if plugin_info.issuesUrl:
+                html += "<a href='{0}'>{1}</a> &nbsp; ".format(
+                    plugin_info.issuesUrl, "issue tracker")
+            if plugin_info.codeUrl:
+                html += "<a href='{0}'>{1}</a>".format(
+                    plugin_info.codeUrl, "source code")
+            html += "<br/>"
+        html += "<br/>"
+
+        # if metadata.author.:
+        #     html += "{0}: <a href='mailto:{1}'>{2}</a>".format(
+        #         "Author", metadata.author_email, metadata.author_name)
+        #     html += "<br/><br/>"
+        if plugin_info.author:
+            html += "{0}: {1}".format("Author", plugin_info.author)
+            html += "<br/><br/>"
+
+        if plugin_info.version:
+            if plugin_info.version:
+                ver = plugin_info.version
+                if ver == "-1":
+                    ver = '?'
+                html += "Installed version: {0} (in {1})<br/>".format(
+                    ver, path)
+        if plugin_info.versionAvailable:
+            html += "Available version: {0} (in {1})<br/>".format(
+                plugin_info.versionAvailable, plugin_info.zipRepository)
+        if plugin_info.changelog:
+            html += "<br/>"
+            changelog = "changelog:<br/>{0} <br/>".format(plugin_info.changelog)
+            html += changelog.replace('\n', "<br/>")
+
+        html += "</td></tr></table>"
+        html += "</body>"
+
+        eg.pluginManagerDialog.ShowPluginDetails(html)
+        self.AdoptButtons(plugin_info)
+
+    def AdoptButtons(self, plugin_info):
+        #  Set buttonInstall text (and sometimes focus)
+        if plugin_info.status == "upgradeable":
+            eg.pluginManagerDialog.SetButtonLabel(
+                "PM_btn_Install", "Upgrade Plugin")
+        elif plugin_info.status == "newer":
+            eg.pluginManagerDialog.SetButtonLabel(
+                "PM_btn_Install", "Downgrade Plugin")
+        elif plugin_info.status == "not installed" or \
+                plugin_info.status == "new":
+            eg.pluginManagerDialog.SetButtonLabel(
+                "PM_btn_Install", "Install Plugin")
+        else:
+            # Default (will be grayed out if not available for reinstallation)
+            eg.pluginManagerDialog.SetButtonLabel(
+                "PM_btn_Install", "Reinstall Plugin")
+
+        # Enable/disable buttons
+        core = plugin_info.kind == "core"
+        eg.pluginManagerDialog.EnableButton(
+            "PM_btn_Install",
+            (
+                plugin_info.status != "orphan" or (
+                    plugin_info.status != "not installed" and
+                    plugin_info.status != "new"
+                )
+            ) and not core
+        )
+        eg.pluginManagerDialog.EnableButton(
+            "PM_btn_Uninstall",
+            plugin_info.status in ["newer", "upgradeable", "installed"]  # "orphan"
+        )
+        # hide = not ((metadata.status == "not installed") or
+        #         (metadata.status == "new") and not core)
+        # self.btn_uninstall.Show(hide)
 
     @eg.LogIt
     def reloadAndExportData(self):
         """ Reload All repositories and export data to the Plugin Manager """
         self.fetchAvailablePlugins(reloadMode=True)
-        self.exportRepositoriesToManager()
-        self.exportPluginsToManager()
+        eg.pluginManagerDialog.UpdateRepositoriesList(self.repositories)
 
     @eg.LogIt
     def onManagerClose(self):
         """ Call this method when closing manager window.
         It resets last-use-dependent values. """
         self.plugins.updateSeenPluginsList()
-        Config.last_start = wx.DateTime().Today().FormatISODate()
 
     @eg.LogIt
     def upgradeAllUpgradeable(self):
         """ Reinstall all upgradeable plugins """
-        for key in self.plugins.allUpgradeable():
+        for key in self.plugins.GetAllUpgradeable():
             self.installPlugin(key)
 
     @eg.LogIt
     def installPlugin(self, guid):
         """ Install given plugin """
-        pluginInfo = self.plugins.all()[guid]
+        pluginInfo = self.plugins.GetAll()[guid]
         if not pluginInfo:
             return
         if pluginInfo.status == "newer" and not pluginInfo.error:
@@ -419,7 +410,7 @@ class PluginManager:
                 "plugin to the latest available version? "
                 "The installed one is newer!",
                 PM_NAME,
-                parent=self.gui,
+                parent=eg.pluginManagerDialog,
                 style=wx.YES | wx.CANCEL | wx.ICON_EXCLAMATION
             )
             if rc != wx.ID_YES:
@@ -436,7 +427,7 @@ class PluginManager:
                 eg.HtmlMessageBox(
                     txt.decode("utf8"),
                     PM_NAME,
-                    parent=self.gui,
+                    parent=eg.pluginManagerDialog,
                     style=wx.OK | wx.ICON_ERROR
                 )
             else:
@@ -444,7 +435,7 @@ class PluginManager:
                     "Downloaded file is corrupted! "
                     "The plugin will not be installed.\n"+repr(sys.exc_info()),
                     PM_NAME,
-                    parent=self.gui,
+                    parent=eg.pluginManagerDialog,
                     style=wx.OK | wx.ICON_ERROR
                 )
             return
@@ -454,7 +445,7 @@ class PluginManager:
             "Now you can add it to your configuration tree."
             .format(pluginInfo.name),
             PM_NAME,
-            parent=self.gui,
+            parent=eg.pluginManagerDialog,
             style=wx.OK | wx.ICON_INFORMATION
         )
 
@@ -470,15 +461,15 @@ class PluginManager:
 
         inUse = eg.document.root.Traverse(SearchFunc) is not None
         if inUse:
-            eg.MessageBox(parent=self.gui,
+            eg.MessageBox(parent=eg.pluginManagerDialog,
                 message=eg.text.General.deletePlugin,
                 caption=PM_NAME,
                 style=wx.NO_DEFAULT | wx.OK | wx.ICON_EXCLAMATION,
             )
             return
 
-        if guid in self.plugins.all():
-            pluginInfo = self.plugins.all()[guid]
+        if guid in self.plugins.GetAll():
+            pluginInfo = self.plugins.GetAll()[guid]
         else:
             pluginInfo = self.plugins.local_cache[guid]
         if not pluginInfo:
@@ -493,7 +484,7 @@ class PluginManager:
                 "'{p.name}' (version {p.version})?".
                 format(p=pluginInfo),
                 PM_NAME,
-                parent=self.gui,
+                parent=eg.pluginManagerDialog,
                 style=wx.NO_DEFAULT | wx.YES | wx.NO | wx.ICON_WARNING
             )
             if rc != wx.ID_YES:
@@ -505,7 +496,7 @@ class PluginManager:
             "Plugin '{0}' was removed successfully."
             .format(pluginInfo.name),
             PM_NAME,
-            parent=self.gui,
+            parent=eg.pluginManagerDialog,
             style=wx.OK | wx.ICON_INFORMATION
         )
 
@@ -513,8 +504,7 @@ class PluginManager:
         # update the list of plugins in plugin handling routines
         self.plugins.ScanAllInstalledPlugins()
         self.plugins.rebuild()
-        self.exportPluginsToManager()
-        self.DoViewChange(self.gui.lstView.GetSelection())
+        eg.pluginManagerDialog.UpdatePluginList()
 
     def DownloadFile(self, url):
         tmpFile = tempfile.mktemp()
@@ -541,81 +531,6 @@ class PluginManager:
                 #     print "none chunk"
         #dlg.Destroy()
         return tmpFile
-
-
-    @eg.LogIt
-    def InitGUI(self, mainFrame):
-        gui = self.gui = PluginManagerGUI(mainFrame, title=PM_NAME)
-        self.gui.chkUpdatecheck.SetValue(Config.check_on_show_PM)
-        self.gui.chkExperimetal.SetValue(Config.allow_experimental)
-        self.gui.chkDeprecated.SetValue(Config.allow_deprecated)
-        intervall = UPDATE_CHECK_INTERVAL.index(Config.check_interval)
-        self.gui.chcIntervall.SetSelection(intervall)
-
-        gui.lstPlugins.Bind(wx.EVT_LISTBOX, self.OnPluginSelected)
-        gui.lstView.Bind(wx.EVT_LISTBOX, self.OnViewChange)
-        gui.Bind(wx.EVT_CLOSE, self.OnDlgClose)
-        gui.Bind(wx.EVT_BUTTON, self.OnDlgOk, id=wx.ID_OK)
-        gui.Bind(wx.EVT_BUTTON, self.OnDlgHelp, id=wx.ID_HELP)
-        gui.btnInstall.Bind(wx.EVT_BUTTON, self.OnInstall)
-        gui.btnUninstall.Bind(wx.EVT_BUTTON, self.OnUninstall)
-
-    def OnUninstall(self, event):
-        idx = self.gui.lstPlugins.GetSelection()
-        itemData = self.gui.lstPlugins.GetClientData(idx)
-        self.uninstallPlugin(itemData.guid)
-
-    def OnInstall(self, event):
-        idx = self.gui.lstPlugins.GetSelection()
-        itemData = self.gui.lstPlugins.GetClientData(idx)
-        self.installPlugin(itemData.guid)
-
-    @eg.LogIt
-    def OnPluginSelected(self, event):
-        self.gui.showPluginDetails(event.ClientData)
-
-    @eg.LogIt
-    def OnDlgClose(self, event):
-        self.onManagerClose()
-        #self.gui.Destroy()
-        self.gui.Hide()
-        event.Skip()
-
-    @eg.LogIt
-    def OnDlgOk(self, event):
-        interval = UPDATE_CHECK_INTERVAL[self.gui.chcIntervall.GetSelection()]
-        Config.check_interval = interval
-        Config.check_on_show_PM = self.gui.chkUpdatecheck.IsChecked()
-        Config.allow_experimental = self.gui.chkExperimetal.IsChecked()
-        Config.allow_deprecated = self.gui.chkDeprecated.IsChecked()
-        self.onManagerClose()
-        #self.gui.Destroy()
-        self.gui.Hide()
-        event.Skip()
-
-    @eg.LogIt
-    def OnDlgHelp(self, event):
-        event.Skip()
-
-    @eg.LogIt
-    def OnViewChange(self, event):
-        self.DoViewChange(event.Selection)
-
-    def DoViewChange(self, viewType=0):
-        info = tabInfoHTML + tabDescriptions[viewType]
-        self.gui.htmlDescreption.SetPage(info, "")
-        self.gui.btnInstall.Disable()
-        self.gui.btnUninstall.Disable()
-        funcLst = [self.plugins.all,
-            self.plugins.allInstalled,
-            self.plugins.allNotInstalled,
-            self.plugins.allUpgradeable,
-            self.plugins.allNew,
-            self.plugins.allInvalid,
-            ]
-        func = funcLst[viewType]
-        items = func()
-        self.UpdatePluginListBox(items)
 
 
 class ActionsMapping(object):
@@ -676,13 +591,13 @@ class NonexistentPluginInfo(eg.PluginInstanceInfo):
 class Repositories(object):
     """ A dict-like class for handling repositories data """
 
-    def __init__(self, gui, plugins):
-        self.gui = gui
+    def __init__(self, plugins):
+        #self.gui = gui
         self.plugins = plugins
         self.repositories = {}
         self.httpId = {}   # {httpId : repoName}
         self.PopulateRepoList()
-        self.gui.Bind(EVT_REPOSITORY_FETCHED, self.OnRepositoryFetched)
+        #self.gui.Bind(EVT_REPOSITORY_FETCHED, self.OnRepositoryFetched)
 
     @eg.LogIt
     def GetAllRepos(self):
@@ -738,29 +653,6 @@ class Repositories(object):
         del self.repositories[oldName]
 
     @eg.LogItWithReturn
-    def CheckingOnStartInterval(self):
-        """
-        Check if the interval value for update checking is one of the
-        allowed values: 0,1,3,7,14,30 days
-        1 is the default value, 0 means
-        """
-        interval = Config.check_interval
-        if not isinstance(interval, int):
-            if isinstance(interval, float):
-                interval = int(round(interval))
-            else:
-                # fallback do 1 day by default
-                interval = 1
-        if interval < 0:
-            interval = 1
-        # allowed values:
-        for j in [1, 3, 7, 14, 30]:
-            if interval >= j:
-                interval = j
-        Config.check_interval = interval
-        return interval
-
-    @eg.LogItWithReturn
     def GetLastStartDay(self):
         # Settings may contain invalid value...
         day = wx.DateTime()
@@ -775,14 +667,14 @@ class Repositories(object):
     @eg.LogItWithReturn
     def IsTimeForChecking(self):
         """ determine whether it's the time for checking for news and updates now """
-        if self.CheckingOnStartInterval() == 0:
+        if Config.check_interval == 0:
             return True
         try:
             lastDate = self.GetLastStartDay()
             interval = (wx.DateTime_Today() - lastDate).days
         except (ValueError, AssertionError):
             interval = 1
-        return interval >= self.CheckingOnStartInterval()
+        return interval >= Config.check_interval
 
     @eg.LogIt
     def PopulateRepoList(self):
@@ -824,12 +716,14 @@ class Repositories(object):
                     repo["url"],
                     repo["enabled"],
                     repo["valid"],
+                    repo["state"],
+                    repo["verify"]
                 ])
             Config.repositories = repos
 
     def FetchRepositories(self):
         all_enabled_repos = self.GetEnabledRepos()
-        if Config.check_on_show_PM \
+        if Config.check_on_start \
             and self.IsTimeForChecking() \
             and all_enabled_repos:
                 self.RequestFetching(all_enabled_repos)
@@ -847,7 +741,7 @@ class Repositories(object):
         )
         dlg.Pulse()
         dlg.Show()
-        self.gui.Bind(
+        eg.pluginManagerDialog.Bind(
             EVT_CHECKING_DONE, lambda event: self.checkingDone(dlg=dlg)
         )
         for key in repos:
@@ -928,7 +822,8 @@ class Repositories(object):
             self.repositories[repo]["error"] = msg
             self.repositories[repo]["state"] = REPO_STATE_ERROR
             eg.MessageBox(
-                msg, PM_NAME, parent=self.gui, style=wx.OK | wx.ICON_ERROR
+                msg, PM_NAME, parent=eg.pluginManagerDialog,
+                style=wx.OK | wx.ICON_ERROR
             )
             return
 
@@ -940,7 +835,8 @@ class Repositories(object):
             self.repositories[repo]["error"] = msg
             self.repositories[repo]["state"] = REPO_STATE_ERROR
             eg.MessageBox(
-                msg, PM_NAME, parent=self.gui, style=wx.OK | wx.ICON_ERROR
+                msg, PM_NAME, parent=eg.pluginManagerDialog,
+                style=wx.OK | wx.ICON_ERROR
             )
             return
 
@@ -1003,10 +899,10 @@ class Repositories(object):
             self.plugins.addFromRepository(plugin_info)
 
         self.repositories[repo]["state"] = REPO_STATE_LOADED_OK
-        wx.PostEvent(self.gui, RepositoryFetched(repo=repo))
+        wx.PostEvent(eg.pluginManagerDialog, RepositoryFetched(repo=repo))
         # is the checking done?
         if not self.fetchingInProgress():
-            wx.PostEvent(self.gui, CheckingDone())
+            wx.PostEvent(eg.pluginManagerDialog, CheckingDone())
 
 
 class PluginCache(object):
@@ -1023,12 +919,10 @@ class PluginCache(object):
 
     @eg.LogIt
     def GetPluginInfo(self, guid):
-        if guid in self.local_cache:
+        try:
             return self.local_cache[guid]
-        else:
-            for guid, info in self.local_cache.iteritems():
-                if info.pluginName == guid:
-                    return info
+        except KeyError:
+            pass
         return None
 
     @eg.LogIt
@@ -1055,19 +949,19 @@ class PluginCache(object):
         return plugins
 
     @eg.LogIt
-    def all(self):
+    def GetAll(self):
         """ return all plugins """
         return self.plugin_cache
 
     @eg.LogIt
-    def allInstalled(self):
+    def GetAllInstalled(self):
         """ return all installed plugins """
         return {
             guid: self.plugin_cache[guid] for guid in self.local_cache
             }
 
     @eg.LogIt
-    def allNotInstalled(self):
+    def GetAllNotInstalled(self):
         """ return all plugins that are not installed """
         return {
             guid: self.plugin_cache[guid] for guid in self.plugin_cache if
@@ -1075,20 +969,20 @@ class PluginCache(object):
             }
 
     @eg.LogIt
-    def allUpgradeable(self):
+    def GetAllUpgradeable(self):
         """ return all upgradeable plugins """
         return {key: self.plugin_cache[key] for key in self.plugin_cache if
                 self.plugin_cache[key].status == "upgradeable"}
 
     @eg.LogIt
-    def allNew(self):
+    def GetAllNew(self):
         """ return all new plugins """
         self._update_seen = True
         return {guid: self.plugin_cache[guid] for guid in self.plugin_cache if
                 self.plugin_cache[guid].status == "new"}
 
     @eg.LogIt
-    def allInvalid(self):
+    def GetAllInvalid(self):
         """ return all invalid plugins """
         plugins = {guid: self.plugin_cache[guid] for guid in self.plugin_cache if
                 (self.plugin_cache[guid].status in ["orphan", "broken"]
@@ -1097,9 +991,9 @@ class PluginCache(object):
         return plugins
 
     @eg.LogItWithReturn
-    def keyByUrl(self, name):
-        """ return plugin key by given url """
-        plugins = [i for i in self.plugin_cache if self.plugin_cache[i].download_url == name]
+    def GetGuidByUrl(self, name):
+        """ Return first guid found for given url """
+        plugins = [guid for guid in self.plugin_cache if self.plugin_cache[guid].download_url == name]
         if plugins:
             return plugins[0]
         return None
@@ -1166,14 +1060,14 @@ class PluginCache(object):
                 # check if the plugin is allowed and if there isn't any better one added already.
 
                 already_in_plugin_cache = guid in self.plugin_cache
-                version_vailable = parse_version(plugin.versionAvailable)
+                version_available = parse_version(plugin.versionAvailable)
 
                 newer_version_available = False
                 if already_in_plugin_cache:
                     ver_in_cache = parse_version(
                         self.plugin_cache[guid].version
                     )
-                    newer_version_available = version_vailable > ver_in_cache
+                    newer_version_available = version_available > ver_in_cache
 
                 chk3 = (already_in_plugin_cache and newer_version_available)
                 chk2 = (Config.allow_deprecated and plugin.deprecated)
@@ -1234,7 +1128,7 @@ class PluginCache(object):
                         self.plugin_cache[guid].status = "upgradeable"
                     elif guid in self.local_cache:
                         self.plugin_cache[guid].status = "installed"
-                    elif ver_in_cache > version_vailable:
+                    elif ver_in_cache > version_available:
                         self.plugin_cache[guid].status = "newer"
                     else:
                         self.plugin_cache[guid].status = "unknown"
@@ -1289,443 +1183,3 @@ class PluginCache(object):
         url += self.plugin_cache[guid].versionAvailable.replace(".", "_")
         url += ".egplugin"
 
-
-class PanelViewSelection(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super(PanelViewSelection, self).__init__(*args, **kwargs)
-
-        # if adding/removing items here, be aware to adapt the values
-        # in EGPluginInstaller.OnOk()
-        choices = ["All plugins", "Installed plugins", "Not installed plugins",
-                   "Upgradeable plugins", "New plugins", "Invalid plugins"]
-        lstView = wx.ListBox(self, ID_VIEW, choices=choices)
-        szr = wx.BoxSizer()
-        szr.Add(lstView, 1, wx.ALL | wx.EXPAND, 5)
-        self.SetSizer(szr)
-        self.Layout()
-
-
-class PanelPluginList(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super(PanelPluginList, self).__init__(*args, **kwargs)
-
-        lstPlugins = wx.ListBox(self, ID_PLUGIN_LIST)
-        srchLabel = wx.StaticText(self, wx.ID_ANY, "Search")
-        searchTxt = wx.TextCtrl(self, ID_PLUGIN_FILTER)
-
-        szrSearch = wx.BoxSizer(wx.HORIZONTAL)
-        szrSearch.Add(srchLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        szrSearch.Add(searchTxt, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-
-        szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(lstPlugins, 1, wx.ALL | wx.EXPAND, 5)
-        szr.Add(szrSearch, 0, wx.ALL | wx.EXPAND, 5)
-        self.SetSizer(szr)
-        self.Layout()
-
-
-class PanelDetailsAndAction(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super(PanelDetailsAndAction, self).__init__(*args, **kwargs)
-
-        #self.htmlDescreption = wx.html.HtmlWindow(self, wx.ID_ANY)
-        htmlDescreption = wx.html2.WebView.New(self, ID_PLUGIN_DETAILS)
-        htmlDescreption.SetPage(tabInfoHTML + tabDescriptions[0], "")
-        btnUpgradeAll = wx.Button(self, ID_UPGRADE_ALL, "Updgrade all")
-        btnUninstall = wx.Button(self, ID_UNINSTALL, "Uninstall plugin")
-        btnInstall = wx.Button(self, ID_INSTALL, "Install plugin")
-
-        btnUpgradeAll.Disable()
-        btnUninstall.Disable()
-        btnInstall.Disable()
-
-        szrBtns= wx.BoxSizer(wx.HORIZONTAL)
-        szrBtns.Add(btnUpgradeAll, 0, wx.ALL, 5)
-        szrBtns.AddSpacer((0, 0), 1, wx.EXPAND, 5)
-        szrBtns.Add(btnUninstall, 0, wx.ALL, 5)
-        szrBtns.Add(btnInstall, 0, wx.ALL, 5)
-
-        szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(htmlDescreption, 1, wx.ALL | wx.EXPAND, 5)
-        szr.Add(szrBtns, 0, wx.EXPAND, 5)
-        self.SetSizer(szr)
-        self.Layout()
-
-
-def StaticCheckBox(parent, chkId, label, message, *args, **kwargs):
-    sb = wx.StaticBox(parent)
-    chkbox = wx.CheckBox(sb, chkId, label)
-    infoText = IB.AutoWrapStaticText(sb, message)
-    infoText.SetSizeHints(-1, 50)
-
-    szr = wx.StaticBoxSizer(sb, wx.VERTICAL)
-    szr.Add(chkbox, 0, wx.ALL, 5)
-    szr.Add(infoText, 0, wx.ALL | wx.EXPAND, 5)
-    return szr
-
-
-def BoxUpdateIntervall(parent):
-    msg = "NOTE: If this function is enabled, {0} will inform" \
-          " you on startup whenever a new plugin or plugin update is " \
-          "available. Otherwise, fetching repositories will be " \
-          "performed during opening of the {1} window.".format(
-              eg.APP_NAME, PM_NAME
-          )
-
-    sb = wx.StaticBox(parent)
-    chk = wx.CheckBox(sb, ID_UPDATE_CHECK, "Check for plugin updates on startup")
-    chc = wx.Choice(sb, ID_INTERVALL, choices=UPDATE_CHECK_CHOICES)
-    chc.SetSelection(0)
-    infoText = IB.AutoWrapStaticText(sb, msg)
-    infoText.SetSizeHints(-1, 50)
-
-    szrH = wx.BoxSizer(wx.HORIZONTAL)
-    szrH.Add(chk, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
-    szrH.Add(chc, 0, wx.ALL, 5)
-
-    szr = wx.StaticBoxSizer(sb, wx.VERTICAL)
-    szr.Add(szrH, 0, wx.ALL, 5)
-    szr.Add(infoText, 0, wx.ALL | wx.EXPAND, 5)
-    return szr
-
-
-def BoxRepositories(parent):
-    sb = wx.StaticBox(parent)
-    lstRepo = ULC.UltimateListCtrl(sb, ID_REPO_LIST, agwStyle=wx.LC_REPORT)
-    lstRepo.InsertColumn(0, "Status")
-    lstRepo.InsertColumn(1, "Name")
-    lstRepo.InsertColumn(2, "URL")
-    btnRepload = wx.Button(sb, ID_REPO_RELOAD, "Reload repository")
-    btnAdd = wx.Button(sb, ID_REPO_ADD, "Add")
-    btnEdit = wx.Button(sb, ID_REPO_EDIT, "Edit...", )
-    btnDelete = wx.Button(sb, ID_REPO_DELETE, "Delete")
-
-    szrBtn = wx.BoxSizer(wx.HORIZONTAL)
-    szrBtn.Add(btnRepload, 0, wx.ALL, 5)
-    szrBtn.AddSpacer((0, 0), 1, wx.EXPAND, 5)
-    szrBtn.Add(btnAdd, 0, wx.ALL, 5)
-    szrBtn.Add(btnEdit, 0, wx.ALL, 5)
-    szrBtn.Add(btnDelete, 0, wx.ALL, 5)
-
-    szr = wx.StaticBoxSizer(sb, wx.VERTICAL)
-    szr.Add(lstRepo, 1, wx.ALL | wx.EXPAND, 5)
-    szr.Add(szrBtn, 0, wx.EXPAND, 5)
-    return szr
-
-
-class PanelSettings(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super(PanelSettings, self).__init__(*args, **kwargs)
-
-        sbIntervall = BoxUpdateIntervall(self)
-        msg = "NOTE: Experimental plugins are generally unsuitable for " \
-              "production use. These plugins are in early stages of " \
-              "development, and should be considered 'incomplete' or " \
-              "'proof of concept' tools. The EventGhost Project does not " \
-              "recommend installing these plugins unless you intend to " \
-              "use them for testing purposes."
-
-        sbExperimental = StaticCheckBox(self, message=msg, chkId=ID_EXPERIMENTAL,
-                                        label="Show also experimental plugins")
-
-        msg = "NOTE: Deprecated plugins are generally unsuitable for " \
-              "production use. These plugins are unmaintained, and should " \
-              "be considered 'obsolete' tools. The EventGhost Project does " \
-              "not recommend installing these plugins unless you still need " \
-              "it and there are no other alternatives available."
-        sbDeprecated = StaticCheckBox(self, message=msg, chkId=ID_DEPRECATED,
-                                      label="Show also deprecated plugins")
-
-        sbRepositories = BoxRepositories(self)
-        #sbRepositories.GetStaticBox().Hide()
-
-        szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(sbIntervall, 0, wx.ALL | wx.EXPAND, 5)
-        szr.Add(sbExperimental, 0, wx.ALL | wx.EXPAND, 5)
-        szr.Add(sbDeprecated, 0, wx.ALL | wx.EXPAND, 5)
-        szr.Add(sbRepositories, 1, wx.ALL | wx.EXPAND, 5)
-        self.SetSizer(szr)
-        self.Layout()
-
-
-class PluginManagerGUI(wx.Frame):
-    def __init__(self, *args, **kwargs):
-        #kwargs.update({"style": wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER})
-        super(PluginManagerGUI, self).__init__(*args, **kwargs)
-
-        self._sortmode = LB_SORT_ASCENDING | LB_SORT_BY_NAME
-        self._plugins = None
-
-        mainBook = wx.Notebook(self, wx.ID_ANY)
-        self.pagePlugins = MultiSplitterWindow(mainBook, style=wx.SP_LIVE_UPDATE)
-        pageSettings = PanelSettings(mainBook)
-
-        pnlView = PanelViewSelection(self.pagePlugins)
-        pnlPluginlist = PanelPluginList(self.pagePlugins)
-        pnlDetailsAndAction = PanelDetailsAndAction(self.pagePlugins)
-        self.pagePlugins.AppendWindow(pnlView, 150)
-        self.pagePlugins.AppendWindow(pnlPluginlist, 180)
-        self.pagePlugins.AppendWindow(pnlDetailsAndAction)
-
-        mainBook.AddPage(self.pagePlugins, "Plugins", True)
-        mainBook.AddPage(pageSettings, "Settings", False)
-
-        stLine = wx.StaticLine(self, wx.ID_ANY, style=wx.LI_HORIZONTAL)
-        btnDlgOk = wx.Button(self, wx.ID_OK)
-        btnDlgHelp = wx.Button(self, wx.ID_HELP)
-
-        szrDlgBtn = wx.StdDialogButtonSizer()
-        szrDlgBtn.AddButton(btnDlgOk)
-        szrDlgBtn.AddButton(btnDlgHelp)
-        szrDlgBtn.Realize()
-
-        szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(mainBook, 1, wx.EXPAND | wx.ALL, 5)
-        szr.Add(stLine, 0, wx.EXPAND | wx.ALL, 5)
-        szr.Add(szrDlgBtn, 0, wx.ALL | wx.EXPAND, 15)
-
-        self.SetSizer(szr)
-        self.SetSize((900, 680))
-        self.Layout()
-
-        self.lstRepo = self.FindWindowById(ID_REPO_LIST)
-        self.lstPlugins = self.FindWindowById(ID_PLUGIN_LIST)
-        self.lstView = self.FindWindowById(ID_VIEW)
-        self.htmlDescreption = self.FindWindowById(ID_PLUGIN_DETAILS)
-        self.btnInstall = self.FindWindowById(ID_INSTALL)
-        self.btnUninstall = self.FindWindowById(ID_UNINSTALL)
-        self.btnUpgradeAll = self.FindWindowById(ID_UPGRADE_ALL)
-        self.chkUpdatecheck = self.FindWindowById(ID_UPDATE_CHECK)
-        self.chkExperimetal = self.FindWindowById(ID_EXPERIMENTAL)
-        self.chkDeprecated = self.FindWindowById(ID_DEPRECATED)
-        self.chcIntervall = self.FindWindowById(ID_INTERVALL)
-
-        self.lstPlugins.Bind(wx.EVT_RIGHT_UP, self.OnListRightClick)
-
-    def OnListRightClick(self, event):
-        mnu = wx.Menu()
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_ASCENDING | LB_SORT_BY_NAME), "sort by name (ascending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_DESCENDING | LB_SORT_BY_NAME), "sort by name (descending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_ASCENDING | LB_SORT_BY_STATUS), "sort by status (ascending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_DESCENDING | LB_SORT_BY_STATUS), "sort by status (descending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_ASCENDING | LB_SORT_BY_VOTE), "sort by vote (ascending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_DESCENDING | LB_SORT_BY_VOTE), "sort by vote (descending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_ASCENDING | LB_SORT_BY_DOWNLOADS), "sort by downloads (ascending)")
-        mnu.Append(wx.ID_HIGHEST + 1000 + (LB_SORT_DESCENDING | LB_SORT_BY_DOWNLOADS), "sort by downloads (descending)")
-
-        #self.Bind(wx.EVT_MENU, lambda event: self.OnPaste(rcRow, rcCol, text), mn)
-        mnu.Bind(wx.EVT_MENU, self.OnListPopupMenu)
-        self.PopupMenu(mnu)
-        mnu.Destroy()
-
-    def OnListPopupMenu(self, event):
-        sortmode = event.GetId() - wx.ID_HIGHEST - 1000
-        self.SortList(sortmode)
-
-    def SortList(self, sortmode):
-        self._sortmode = sortmode
-        if sortmode & LB_SORT_BY_NAME:
-            self.SortByName()
-        elif sortmode & LB_SORT_BY_STATUS:
-            self.SortByStatus()
-        elif sortmode & LB_SORT_BY_RELEASE_DATE:
-            self.SortByReleaseDate()
-        else:
-            self._sortmode = LB_SORT_BY_NAME | LB_SORT_ASCENDING
-            self.SortByName()
-        if self._sortmode & LB_SORT_DESCENDING:
-            self._plugins.reverse()
-        self.RefreshList()
-
-    def SortByName(self):
-        self._plugins.sort(cmp=lambda x,y: cmp(x[0], y[0]))
-
-    def SortByStatus(self):
-        self._plugins.sort(cmp=lambda x, y:
-                                cmp(x[1].status, y[1].status))
-
-    def SortByReleaseDate(self):
-        pass
-
-    def RefreshList(self):
-        lstPlugins = self.lstPlugins
-        lstPlugins.Freeze()
-        lstPlugins.Clear()
-        for name, itemData in self._plugins:
-            lstPlugins.Append(name, itemData)
-        lstPlugins.Thaw()
-
-    def UpdateList(self, lst, sortby=None):
-        # type: (list, int) -> None
-        '''
-        :param lst: list [plugin name, metaData]
-        :param sortby: optional sort flags
-        :returns:
-        '''
-        self._plugins = lst
-        self.SortList(sortby or self._sortmode)
-
-    eg.LogItNoArgs
-    def showPluginDetails(self, metadata):
-        if not metadata:
-            return
-        html = "<style> body, table { padding:0px; margin:0px;" \
-               "font-family:verdana; font-size: 12px; } div#votes {" \
-               "width:360px; margin-left:98px; padding-top:3px; } </style>"
-
-        # First prepare message box(es)
-        if metadata.error:
-            if metadata.error == "incompatible":
-                errorMsg = "<b>{0}</b><br/>{1}".format(
-                    "This plugin is incompatible with this version of EventGhost",
-                    "Plugin is designed for EventGhost {0}".format(metadata.error_details))
-            elif metadata.error == "dependent":
-                errorMsg = "<b>{0}:</b><br/>{1}".format(
-                    "This plugin requires a missing module",
-                    metadata.error_details)
-            else:
-                errorMsg = "<b>{0}</b><br/>{1}".format(
-                    "This plugin is broken",
-                    metadata.error_details)
-                html += '<table bgcolor="#FFFF88" cellspacing="2" ' \
-                    'cellpadding="6" width="100%">' \
-                    '<tr><td width="100%" style="color:#CC0000">' \
-                    '{0}</td></tr></table>'.format(errorMsg)
-
-        if metadata.status == "upgradeable":
-            html += '<table bgcolor="#FFFFAA" cellspacing="2" ' \
-                    'cellpadding="6" width="100%">' \
-                    '<tr><td width="100%" style="color:#880000">' \
-                    '<b>{0}</b></td></tr></table>'.format("There is a new version available")
-        if metadata.status == "new":
-            html += '<table bgcolor="#CCFFCC" cellspacing="2" ' \
-                    'cellpadding="6" width="100%">' \
-                     '<tr><td width="100%" style="color:#008800">' \
-                     '<b>{0}</b></td></tr></table>'.format("This is a new plugin")
-        if metadata.status == "newer":
-            html += '<table bgcolor="#FFFFCC" cellspacing="2" ' \
-                    'cellpadding="6" width="100%">' \
-                     '<tr><td width="100%" style="color:#550000; vertical-align:middle">' \
-                    '<b>{0}</b></td></tr></table>'.format(
-                    "Installed version of this plugin is higher than"
-                    " any version found in repository")
-        if metadata.experimental:
-            icn = os.path.join(eg.imagesDir, "pluginExperimental.png")
-            html += '<table bgcolor="#EEEEBB" cellspacing="2" ' \
-                    'cellpadding="2" width="100%">' \
-                    '<tr><td><img src="file://{1}" width="32"></td>' \
-                    '<td width="100%" style="color:#660000; vertical-align:' \
-                    'middle"><b>{0}</b></td></tr></table>'.format(
-                    "This plugin is experimental", icn)
-        if metadata.deprecated:
-            icn = os.path.join(eg.imagesDir, "pluginDeprecated.png")
-            html += '<table bgcolor="#EEBBCC" cellspacing="2" ' \
-                    'cellpadding="2" width="100%">' \
-                    '<tr><td><img src="file://{1}" width="32"></td>' \
-                    '<td width="100%" style="color:#660000; vertical-align: ' \
-                    'middle"><b>{0}</b></td></tr></table>'.format(
-                    "This plugin is deprecated", icn)
-
-        # Now the metadata
-        html += '<table cellspacing="4" width="100%"><tr><td ' \
-                'valign="middle"><h1>&nbsp;'
-        path = metadata.library
-        icon = metadata.icon
-        if icon is None:
-            icon = eg.Icons.PLUGIN_ICON.key
-        elif isinstance(icon, (eg.Icons.PathIcon, eg.Icons.StringIcon)):
-            icon = icon.key
-        if os.path.exists(icon) and os.path.isfile(icon):
-            iconPath = "file://{0}".format(icon.replace('\\', '/'))
-            html += '<img src="{0}">&nbsp;'.format(iconPath)
-        else:
-            src = '<img src="data:image/gif;base64,\n' + icon
-            html += src + '">&nbsp;'
-
-        html += "{0}</h1>".format(metadata.name)
-        try:
-            html += "<h5>{0}</h5>".format(metadata.description)
-        except UnicodeEncodeError:
-            html += "<h5>{0}</h5>".format(repr(metadata.description))
-
-        if metadata.longDescription:
-            about = metadata.longDescription
-            html += about#.replace('\n', "<br/>")
-
-        html += "<br/><br/>"
-        if metadata.kind:
-            html += "{0}: {1} <br/>".format("Kind", metadata.kind)
-        # if metadata["tags"]:
-        #     html += "{0}: {1} <br/>".format("Tags", metadata["tags"])
-        if metadata.url or metadata.issuesUrl or metadata.codeUrl:
-            html += "{0}: ".format("More info")
-            if metadata.url:
-                html += "<a href='{0}'>{1}</a> &nbsp; ".format(
-                    metadata.url, "url")
-            if metadata.issuesUrl:
-                html += "<a href='{0}'>{1}</a> &nbsp; ".format(
-                    metadata.issuesUrl, "issue tracker")
-            if metadata.codeUrl:
-                html += "<a href='{0}'>{1}</a>".format(
-                    metadata.codeUrl, "source code")
-            html += "<br/>"
-        html += "<br/>"
-
-        # if metadata.author.:
-        #     html += "{0}: <a href='mailto:{1}'>{2}</a>".format(
-        #         "Author", metadata.author_email, metadata.author_name)
-        #     html += "<br/><br/>"
-        if metadata.author:
-            html += "{0}: {1}".format("Author", metadata.author)
-            html += "<br/><br/>"
-
-        if metadata.version:
-            if metadata.version:
-                ver = metadata.version
-                if ver == "-1":
-                    ver = '?'
-                html += "Installed version: {0} (in {1})<br/>".format(
-                    ver, path)
-        if metadata.versionAvailable:
-            html += "Available version: {0} (in {1})<br/>".format(
-                metadata.versionAvailable, metadata.zipRepository)
-        if metadata.changelog:
-            html += "<br/>"
-            changelog = "changelog:<br/>{0} <br/>".format(metadata.changelog)
-            html += changelog.replace('\n', "<br/>")
-
-        html += "</td></tr></table>"
-        html += "</body>"
-
-        self.htmlDescreption.SetPage(html, "")
-
-        #  Set buttonInstall text (and sometimes focus)
-        if metadata.status == "upgradeable":
-            self.btnInstall.SetLabel("Upgrade Plugin")
-        elif metadata.status == "newer":
-            self.btnInstall.SetLabel("Downgrade Plugin")
-        elif metadata.status == "not installed" or \
-                metadata.status == "new":
-            self.btnInstall.SetLabel("Install Plugin")
-        else:
-            # Default (will be grayed out if not available for reinstallation)
-            self.btnInstall.SetLabel("Reinstall Plugin")
-
-        # Enable/disable buttons
-        core = metadata.kind == "core"
-        self.btnInstall.Enable(
-            (
-                metadata.status != "orphan" or
-                (
-                    metadata.status != "not installed" and
-                    metadata.status != "new"
-                )
-            ) and
-            not core
-        )
-        self.btnUninstall.Enable(
-            metadata.status in ["newer", "upgradeable", "installed"]  # "orphan"
-        )
-        # hide = not ((metadata.status == "not installed") or
-        #         (metadata.status == "new") and not core)
-        # self.btnUninstall.Show(hide)

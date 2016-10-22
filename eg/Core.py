@@ -374,6 +374,7 @@ else:
 eg.actionThread = eg.ActionThread()
 eg.eventThread = eg.EventThread()
 eg.pluginManager = eg.PluginManager()
+eg.pluginManagerDialog = eg.PluginManagerDialog()
 eg.scheduler = eg.Scheduler()
 
 eg.TriggerEvent = eg.eventThread.TriggerEvent
