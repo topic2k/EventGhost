@@ -168,9 +168,21 @@ class Default:
             Intervall_14 = "every 2 weeks"
             Intervall_30 = "every month"
             LabelAllPlugins = "All plugins"
+            LabelCheckUpdates = "Check for plugin updates"
+            LabelDeprecated = "Show also deprecated plugins"
+            LabelDowngradePlugin = "Downgrade Plugin"
+            LabelExperimental = "Show also experimental plugins"
+            LabelInstall = "Install plugin"
             LabelInstalled = "Installed plugins"
+            LabelInstallPlugin = "Install Plugin"
             LabelNotInstalled = "Not installed plugins"
+            LabelPagePlugins = "Plugins"
+            LabelPageSettings = "Settings"
+            LabelreinstallPlugin = "Reinstall Plugin"
+            LabelUninstall = "Uninstall plugin"
             LabelUpgradeable = "Upgradeable plugins"
+            LabelUpgradePlugin = "Upgrade Plugin"
+            LabelUpgradeAll = "Updgrade all"
             LabelNew = "New plugins"
             LabelInvalid = "Invalid plugins"
             InfoAll = """<h3>All Plugins</h3>
@@ -194,6 +206,20 @@ class Default:
                 details, or to reinstall or uninstall this plugin.
                 </p>
                 """
+            InfoDeprecated = \
+                "NOTE: Deprecated plugins are generally unsuitable for " \
+                "production use. These plugins are unmaintained, and " \
+                "should be considered 'obsolete' tools. The " \
+                "EventGhost Project does not recommend installing these " \
+                "plugins unless you still need it and there are no other " \
+                "alternatives available."
+            InfoExperimental = \
+                "NOTE: Experimental plugins are generally unsuitable for " \
+                "production use. These plugins are in early stages of " \
+                "development, and should be considered 'incomplete' or " \
+                "'proof of concept' tools. The EventGhost Project does not " \
+                "recommend installing these plugins unless you intend to " \
+                "use them for testing purposes."
             InfoInstalled = """<h3>Installed Plugins</h3>
                 <p>
                 Here you only see plugins <b>installed</b> in {0}.
@@ -222,9 +248,9 @@ class Default:
                 </p>
                 <p>
                 A plugin can be downloaded and installed by clicking on
-                it's name, and then click the 'Install' button.
+                it's name, and then click the '{0}' button.
                 </p>
-                """
+                """.format(LabelInstallPlugin)
             InfoUpgradeable = """<h3>Upgradeable plugins</h3>
             <p>
             Here are <b>upgradeable plugins</b>. It means, more recent
@@ -262,6 +288,11 @@ class Default:
             the plugin should work.
             </p>
             """
+            InfoUpdateCheck = \
+                "NOTE: If this function is enabled, {0} will inform" \
+                " you on startup whenever a new plugin or plugin update is " \
+                "available. Otherwise, fetching repositories will be " \
+                "performed during opening of the {1} window."
 
     class MainFrame:
         onlyLogAssigned = "&Log only assigned and activated events"

@@ -58,7 +58,7 @@ VIEWS = {
         "func": GetAll,
     },
     egtext.LabelInstalled: {
-        "desc": egtext.InfoInstalled.format((eg.APP_NAME)),
+        "desc": egtext.InfoInstalled.format(eg.APP_NAME),
         "func": GetAllInstalled,
     },
     egtext.LabelNotInstalled: {
@@ -74,11 +74,10 @@ VIEWS = {
         "func": GetAllNew,
     },
     egtext.LabelInvalid: {
-        "desc": egtext.InfoInvalid,
+        "desc": egtext.InfoInvalid.format(eg.APP_NAME),
         "func": GetAllInvalid,
     },
 }
-
 
 
 # noinspection PyClassHasNoInit

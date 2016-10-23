@@ -149,7 +149,9 @@ def StaticCheckBox(parent, label, message, name, cfg_attr):
     chkbox = wx.CheckBox(sb, wx.ID_ANY, label, name=name)
     if cfg_attr:
         chkbox.SetValue(getattr(Config, cfg_attr))
-        chkbox.Bind(wx.EVT_CHECKBOX, lambda event: OnEventCheckbox(event, cfg_attr))
+        chkbox.Bind(
+            wx.EVT_CHECKBOX, lambda event: OnEventCheckbox(event, cfg_attr)
+        )
     infoText = IB.AutoWrapStaticText(sb, message)
     infoText.SetSizeHints(-1, 50)
 
@@ -160,25 +162,22 @@ def StaticCheckBox(parent, label, message, name, cfg_attr):
 
 
 def BoxUpdateIntervall(parent):
-    msg = "NOTE: If this function is enabled, {0} will inform" \
-          " you on startup whenever a new plugin or plugin update is " \
-          "available. Otherwise, fetching repositories will be " \
-          "performed during opening of the {1} window.".format(
-              eg.APP_NAME, eg.PM_NAME
-          )
-
     sb = wx.StaticBox(parent)
     chk = wx.CheckBox(
-        sb, wx.ID_ANY, "Check for plugin updates",
+        sb, wx.ID_ANY, egtext.LabelCheckUpdates,
         name="PM_chk_OnShow"
     )
-    chk.Bind(wx.EVT_CHECKBOX, lambda event: OnEventCheckbox(
-        event, "check_on_start"
-    ))
+    chk.Bind(
+        wx.EVT_CHECKBOX, lambda event: OnEventCheckbox(
+            event, "check_on_start"
+        )
+    )
     chc = wx.Choice(sb, wx.ID_ANY, choices=UPDATE_CHECK_CHOICES.values())
     chc.SetStringSelection(UPDATE_CHECK_CHOICES[GetCheckingInterval()])
     chc.Bind(wx.EVT_CHOICE, OnIntervalChange)
-    info_text = IB.AutoWrapStaticText(sb, msg)
+    info_text = IB.AutoWrapStaticText(
+        sb, egtext.InfoUpdateCheck.format(eg.APP_NAME, eg.PM_NAME)
+    )
     info_text.SetSizeHints(-1, 50)
 
     szrH = wx.BoxSizer(wx.HORIZONTAL)
@@ -277,19 +276,19 @@ class PanelDetailsAndAction(wx.Panel):
         )
 
         btn_upgrade_all = wx.Button(
-            self, wx.ID_ANY, "Updgrade all", name="PM_btn_UpgradeAll"
+            self, wx.ID_ANY, egtext.LabelUpgradeAll, name="PM_btn_UpgradeAll"
         )
         btn_upgrade_all.Disable()
         btn_upgrade_all.Bind(wx.EVT_BUTTON, OnUpgradeAll)
 
         btn_uninstall = wx.Button(
-            self, wx.ID_ANY, "Uninstall plugin", name="PM_btn_Uninstall"
+            self, wx.ID_ANY, egtext.LabelUninstall, name="PM_btn_Uninstall"
         )
         btn_uninstall.Disable()
         btn_uninstall.Bind(wx.EVT_BUTTON, OnUninstall)
 
         btn_install = wx.Button(
-            self, wx.ID_ANY, "Install plugin", name="PM_btn_Install"
+            self, wx.ID_ANY, egtext.LabelInstall, name="PM_btn_Install"
         )
         btn_install.Disable()
         btn_install.Bind(wx.EVT_BUTTON, OnInstall)
@@ -312,30 +311,20 @@ class PanelSettings(wx.Panel):
         super(PanelSettings, self).__init__(*args, **kwargs)
 
         sb_interval = BoxUpdateIntervall(self)
-        msg = "NOTE: Experimental plugins are generally unsuitable for " \
-              "production use. These plugins are in early stages of " \
-              "development, and should be considered 'incomplete' or " \
-              "'proof of concept' tools. The EventGhost Project does not " \
-              "recommend installing these plugins unless you intend to " \
-              "use them for testing purposes."
-
         sbExperimental = StaticCheckBox(
-            self, message=msg, name="PM_chk_Experimental",
-            label="Show also experimental plugins",
+            self,
+            message=egtext.InfoExperimental,
+            name="PM_chk_Experimental",
+            label=egtext.LabelExperimental,
             cfg_attr="allow_experimental"
         )
-
-        msg = "NOTE: Deprecated plugins are generally unsuitable for " \
-              "production use. These plugins are unmaintained, and should " \
-              "be considered 'obsolete' tools. The EventGhost Project does " \
-              "not recommend installing these plugins unless you still need " \
-              "it and there are no other alternatives available."
         sbDeprecated = StaticCheckBox(
-            self, message=msg, name="PM_chk_Deprecated",
-            label="Show also deprecated plugins",
+            self,
+            message=egtext.InfoDeprecated,
+            name="PM_chk_Deprecated",
+            label=egtext.LabelDeprecated,
             cfg_attr="allow_deprecated"
         )
-
         sbRepositories = BoxRepositories(self)
 
         szr = wx.BoxSizer(wx.VERTICAL)
@@ -350,7 +339,7 @@ class PanelSettings(wx.Panel):
 
 class PluginManagerDialog(wx.Frame):
     @eg.LogIt
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super(PluginManagerDialog, self).__init__(None, title=eg.PM_NAME)
 
         self._sortmode = LB_SORT_ASCENDING | LB_SORT_BY_NAME
@@ -366,19 +355,18 @@ class PluginManagerDialog(wx.Frame):
         page_plugins.AppendWindow(pnlPluginlist, 180)
         page_plugins.AppendWindow(pnlDetailsAndAction)
 
-        notebook.AddPage(page_plugins, "Plugins", True)
-        notebook.AddPage(page_settings, "Settings", False)
+        notebook.AddPage(page_plugins, egtext.LabelPagePlugins, True)
+        notebook.AddPage(page_settings, egtext.LabelPageSettings, False)
 
         self.Bind(wx.EVT_CLOSE, self.OnDlgClose)
 
         szr = wx.BoxSizer(wx.VERTICAL)
         szr.Add(notebook, 1, wx.EXPAND | wx.ALL, 5)
 
+        self.Bind(wx.EVT_SHOW, self.AfterShown)
         self.SetSizer(szr)
         self.SetSize((650, 550))
         self.Layout()
-
-        self.Bind(wx.EVT_SHOW, self.AfterShown)
 
     @eg.LogIt
     def AfterShown(self, event):
@@ -501,18 +489,18 @@ class PluginManagerDialog(wx.Frame):
         #  Set buttonInstall text (and sometimes focus)
         if plugin_info.status == "upgradeable":
             self.SetButtonLabel(
-                "PM_btn_Install", "Upgrade Plugin")
+                "PM_btn_Install", egtext.LabelUpgradePlugin)
         elif plugin_info.status == "newer":
             self.SetButtonLabel(
-                "PM_btn_Install", "Downgrade Plugin")
+                "PM_btn_Install", egtext.LabelDowngradePlugin)
         elif plugin_info.status == "not installed" or \
                 plugin_info.status == "new":
             self.SetButtonLabel(
-                "PM_btn_Install", "Install Plugin")
+                "PM_btn_Install", egtext.LabelInstallPlugin)
         else:
             # Default (will be grayed out if not available for reinstallation)
             self.SetButtonLabel(
-                "PM_btn_Install", "Reinstall Plugin")
+                "PM_btn_Install", egtext.LabelreinstallPlugin)
 
         # Enable/disable buttons
         core = plugin_info.kind == "core"
