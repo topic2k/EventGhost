@@ -18,104 +18,12 @@
 
 import eg
 
-PM_NAME = eg.APP_NAME + " Plugin Manager"
+
+egtext = eg.text.PluginManager.Dialog
 
 PLUGIN_DETAILS_HTML_STYLE = "<style> body, table { margin:4px; " \
                             "font-family:verdana; font-size:12px; " \
                             "} </style>"
-
-info_all = """<h3>All Plugins</h3>
-<p>
-On the left you see the list of all plugins available for your EventGhost,
-both installed and available for download. Some plugins come with your
-EventGhost installation while most of them are made available via
-the plugin repositories.
-</p>
-
-<p>
-You can temporarily enable or disable a plugin.
-To <i>enable</i> or <i>disable</i> a plugin, click its checkbox
-or doubleclick its name...
-</p>
-
-<p>
-Plugins showing in <span style='color:red'>red</span> are not loaded
-because there is a problem. They are also listed on the 'Invalid' tab.
-Click on the plugin name to see more details, or to reinstall or
-uninstall this plugin.
-</p>\
-"""
-info_installed = """<h3>Installed Plugins</h3>
-
-<p>
-Here you only see plugins <b>installed</b> in EventGhost.
-</p>
-<p>
-Click on the name to see details.
-</p>
-<p>
-Click the checkbox or doubleclick the name to <i>activate</i> or
-<i>deactivate</i> the plugin.
-</p>
-<p>
-You can change the sorting via the context menu (right click).
-</p>
-"""
-info_not_installed = """<h3>Not installed plugins</h3>
-
-<p>
-Here you see the list of all plugins available in the repositories, but
-which are <b>not yet installed</b>.
-</p>
-<p>
-Click on the name to see details.
-</p>
-<p>
-You can change the sorting via the context menu (right click).
-</p>
-<p>
-A plugin can be downloaded and installed by clicking on it's name, and
-then click the 'Install plugin' button.
-</p>
-"""
-info_upgradeable = """<h3>Upgradeable plugins</h3>
-
-<p>
-Here are <b>upgradeable plugins</b>. It means more recent versions of installed
-plugins are available in the repositories.
-</p>
-"""
-info_new = """<h3>New plugins</h3>
-
-<p>
-Here you see <b>new</b> plugins which were released
-since you last visited this list.
-</p>
-"""
-info_invalid = """<h3>Invalid plugins</h3>
-
-<p>
-Plugins in this list here are <b>broken or incompatible</b> with your
-version of EventGhost.
-</p>
-
-<p>
-Click on an individual plugin; if possible EventGhost shows
-you more information.
-</p>
-
-<p>
-The main reasons to have invalid plugins is that this plugin is not build
-for this version of EventGhost. Maybe you can download another version
-from <a href="http://www.eventghost.net/downloads/">www.eventghost.net</a>.
-</p>
-
-<p>
-Another common reason is that a plugin needs some external python
-libraries (dependencies). You can install them yourself, depending on
-your operating system. After a correct install, the plugin should work.
-</p>
-"""
 
 
 def GetAll():
@@ -142,33 +50,35 @@ def GetAllInvalid():
     return eg.pluginManager.plugins.GetAllInvalid()
 
 
+ALL_PLUGINS_LABEL = egtext.LabelAllPlugins
+DEFAULT_VIEW = egtext.LabelAllPlugins
 VIEWS = {
-    "All plugins": {
-        "desc": info_all,
+    egtext.LabelAllPlugins: {
+        "desc": egtext.InfoAll.format(eg.APP_NAME),
         "func": GetAll,
     },
-    "Installed plugins": {
-        "desc": info_installed,
+    egtext.LabelInstalled: {
+        "desc": egtext.InfoInstalled.format((eg.APP_NAME)),
         "func": GetAllInstalled,
     },
-    "Not installed plugins": {
-        "desc": info_not_installed,
+    egtext.LabelNotInstalled: {
+        "desc": egtext.InfoNotInstalled,
         "func": GetAllNotInstalled,
     },
-    "Upgradeable plugins": {
-        "desc": info_upgradeable,
+    egtext.LabelUpgradeable: {
+        "desc": egtext.InfoUpgradeable,
         "func": GetAllUpgradeable,
     },
-    "New plugins": {
-        "desc": info_new,
+    egtext.LabelNew: {
+        "desc": egtext.InfoNew,
         "func": GetAllNew,
     },
-    "Invalid plugins": {
-        "desc": info_invalid,
+    egtext.LabelInvalid: {
+        "desc": egtext.InfoInvalid,
         "func": GetAllInvalid,
     },
 }
-DEFAULT_VIEW = VIEWS.keys()[0]
+
 
 
 # noinspection PyClassHasNoInit

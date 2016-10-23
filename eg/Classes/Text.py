@@ -96,6 +96,173 @@ class Default:
     class Plugin:
         pass
 
+    class PluginManager:
+        Author = "Author"
+        AvailableVersion = "Available version"
+        Changelog = "Changelog"
+        Deprecated = "This plugin is deprecated"
+        Downgrade = \
+            "Are you sure you want to downgrade the " \
+            "plugin to the latest available version? " \
+            "The installed one is newer!"
+        ErrorBrokenPlugin = "This plugin is broken."
+        ErrorConnectingRepo = "Couldn't connect to repository:"
+        ErrorIncompatible1 =\
+            "This plugin is incompatible with this version of {0}.\n"
+        ErrorIncompatible2 = "The Plugin is designed for {0} {1}."
+        ErrorMissingModule = "This plugin requires a missing module."
+        ErrorParsingRepoData = "Error while parsing data from repository."
+        ErrorReadingRepo = "Error reading repository: {0}\n\n{1}"
+        ErrorWrongFormat = \
+            "Data from repository has wrong format.\n" \
+            "Missing Key:"
+        Experimental = "This plugin is experimental"
+        FetchingRepos = "fetching repositories..."
+        FileCorrupt = "Downloaded file is corrupted!\n" \
+                      "The plugin will not be installed."
+        In = "in"
+        InstalledVersion = "Installed version"
+        NewPluginsAvailable = \
+            "There are new plugins available.\nYou can " \
+            "install and get information about them in " \
+            "the Plugin Manager."
+        NewerPlugin =\
+            "Installed version of this plugin is higher than" \
+            " any version found in repository"
+        NewPlugin = "This is a new plugin"
+        NewVersionAvailable = "There is a new version available"
+        NoDetails = "No details available"
+        NotAvailable = \
+            "Warning: this plugin isn't available in any accessible " \
+            "repository!\nAre you sure you want to uninstall plugin\n" \
+            "'{0}' (version {1})?"
+        ObsoletePlugin = \
+            "Obsolete plugin:\n{0}\n\n" \
+            "EventGhost has detected an obsolete plugin that masks " \
+            "its more recent version shipped with this copy of " \
+            "EventGhost. Do you want to remove the old plugin right " \
+            "now and unmask the more recent version?"
+        OfficialRepoName = "Official EventGhost Plugin Repository"
+        PluginRemoveFailed = \
+            "Removing plugin failed!\n" \
+            "Path: {0}\n" \
+            "Function: {1}\n" \
+            "Exception information:\n{2}"
+        PluginStatusAmbiguous1 = "Error: plugin status is ambiguous (1)"
+        PluginStatusAmbiguous2 = \
+            "Error: plugin status is ambiguous (2)" \
+            "\n-----------------------------------------------" \
+            "\nplugin: {0} ({1})" \
+            "\nself.plugin_cache[key].status = {2}" \
+            "\nself.plugin_cache[key].installed = {3}"
+        Removed = "Plugin '{0}' was removed successfully."
+        Success = \
+            "Plugin '{0}' was successfully installed.\n" \
+            "Now you can add it to your configuration tree."
+
+        class Dialog:
+            Intervall_0 = "on every call of PluginManager"
+            Intervall_1 = "once a day"
+            Intervall_3 = "every 3 days"
+            Intervall_7 = "every week"
+            Intervall_14 = "every 2 weeks"
+            Intervall_30 = "every month"
+            LabelAllPlugins = "All plugins"
+            LabelInstalled = "Installed plugins"
+            LabelNotInstalled = "Not installed plugins"
+            LabelUpgradeable = "Upgradeable plugins"
+            LabelNew = "New plugins"
+            LabelInvalid = "Invalid plugins"
+            InfoAll = """<h3>All Plugins</h3>
+                <p>
+                On the left you see the list of all plugins available for
+                your {0}, both installed and available for download.
+                Some plugins come with your {0} installation while
+                most of them are made available via the plugin repositories.
+                </p>
+
+                <p>
+                You can temporarily enable or disable a plugin.
+                To <i>enable</i> or <i>disable</i> a plugin, click its
+                checkbox or doubleclick its name...
+                </p>
+
+                <p>
+                Plugins showing in <span style='color:red'>red</span> are
+                not loaded because there is a problem. They are also listed
+                on the 'Invalid' tab. Click on the plugin name to see more
+                details, or to reinstall or uninstall this plugin.
+                </p>
+                """
+            InfoInstalled = """<h3>Installed Plugins</h3>
+                <p>
+                Here you only see plugins <b>installed</b> in {0}.
+                </p>
+                <p>
+                Click on the name to see details.
+                </p>
+                <p>
+                Click the checkbox or doubleclick the name to <i>activate</i>
+                or <i>deactivate</i> the plugin.
+                </p>
+                <p>
+                You can change the sorting via the context menu (right click).
+                </p>
+                """
+            InfoNotInstalled = """<h3>Not installed plugins</h3>
+                <p>
+                Here you see the list of all plugins available in the
+                repositories, but which are <b>not yet installed</b>.
+                </p>
+                <p>
+                Click on the name to see details.
+                </p>
+                <p>
+                You can change the sorting via the context menu (right click).
+                </p>
+                <p>
+                A plugin can be downloaded and installed by clicking on
+                it's name, and then click the 'Install' button.
+                </p>
+                """
+            InfoUpgradeable = """<h3>Upgradeable plugins</h3>
+            <p>
+            Here are <b>upgradeable plugins</b>. It means, more recent
+            versions of installed plugins are available in the repositories.
+            </p>
+            """
+            InfoNew = """<h3>New plugins</h3>
+            <p>
+            Here you see <b>new</b> plugins which were released
+            since you last visited this list.
+            </p>
+            """
+            InfoInvalid = """<h3>Invalid plugins</h3>
+            <p>
+            Plugins in this list here are <b>broken or incompatible</b>
+            with your version of {0}.
+            </p>
+
+            <p>
+            Click on an individual plugin; if possible {0} shows
+            you more information.
+            </p>
+
+            <p>
+            The main reasons to have invalid plugins, is that this plugin is
+            not build for this version of {0}. Maybe you can download another
+            version from <a href="http://www.eventghost.net/downloads/">
+            www.eventghost.net</a>.
+            </p>
+
+            <p>
+            Another common reason is that a plugin needs some external python
+            libraries (dependencies). You can install them yourself,
+            depending on your operating system. After a correct install,
+            the plugin should work.
+            </p>
+            """
+
     class MainFrame:
         onlyLogAssigned = "&Log only assigned and activated events"
         onlyLogAssignedToolTip = (

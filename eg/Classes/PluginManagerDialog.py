@@ -26,16 +26,19 @@ import wx.richtext
 from wx.lib.splitter import MultiSplitterWindow
 
 import eg
-from .PluginManagerSettings import Config, DEFAULT_VIEW, \
-    PLUGIN_DETAILS_HTML_STYLE, PM_NAME, VIEWS
+from .PluginManagerSettings import ALL_PLUGINS_LABEL, Config, DEFAULT_VIEW, \
+    PLUGIN_DETAILS_HTML_STYLE, VIEWS
+
+
+egtext = eg.text.PluginManager.Dialog
 
 UPDATE_CHECK_CHOICES = {
-    0: "on every call of PluginManager",
-    1: "once a day",
-    3: "every 3 days",
-    7: "every week",
-    14: "every 2 weeks",
-    30: "every month"
+    0: egtext.Intervall_0,
+    1: egtext.Intervall_1,
+    3: egtext.Intervall_3,
+    7: egtext.Intervall_7,
+    14: egtext.Intervall_14,
+    30: egtext.Intervall_30
 }
 
 LB_SORT_ASCENDING = 1
@@ -47,11 +50,13 @@ LB_SORT_BY_STATUS = 32
 LB_SORT_BY_RELEASE_DATE = 64
 
 
+@eg.LogIt
 def OnEventCheckbox(event, cfg_attr):
     setattr(Config, cfg_attr, event.IsChecked())
     event.Skip()
 
 
+@eg.LogIt
 def OnIntervalChange(event):
     value = event.GetString()
     for interval, text in UPDATE_CHECK_CHOICES.iteritems():
@@ -60,6 +65,7 @@ def OnIntervalChange(event):
             break
 
 
+@eg.LogIt
 def GetCheckingInterval():
     """
     Check if the interval value for update checking is one of the
@@ -71,11 +77,10 @@ def GetCheckingInterval():
         if isinstance(interval, float):
             interval = int(round(interval))
         else:
-            # fallback do 1 day by default
+            # fallback to 1 day by default
             interval = 1
     if interval < 0:
         interval = 1
-    # allowed values:
     allowed = UPDATE_CHECK_CHOICES.keys()
     allowed.sort(reverse=True)
     for j in allowed:
@@ -86,9 +91,10 @@ def GetCheckingInterval():
     return interval
 
 
+@eg.LogIt
 def UpdateView(lst, guid):
     view = eg.pluginManagerDialog.GetViewType()
-    if view != "All plugins":
+    if view != ALL_PLUGINS_LABEL:
         DoViewChange()
     else:
         for item_id in range(lst.GetItemCount()):
@@ -98,6 +104,7 @@ def UpdateView(lst, guid):
                 break
 
 
+@eg.LogIt
 def OnUninstall(event):
     lst = wx.FindWindowByName("PM_PluginList")
     selected = lst.GetFirstSelected()
@@ -107,16 +114,21 @@ def OnUninstall(event):
     eg.pluginManager.UninstallPlugin(guid)
     UpdateView(lst, guid)
 
+
+@eg.LogIt
 def OnInstall(event):
     lst = wx.FindWindowByName("PM_PluginList")
     guid = lst.GetItem(lst.GetFirstSelected()).GetData()
     eg.pluginManager.InstallPlugin(guid)
     UpdateView(lst, guid)
 
+
+@eg.LogIt
 def OnUpgradeAll(event):
     pass
 
 
+@eg.LogIt
 def OnViewChange(event):
     DoViewChange(event.GetString())
 
@@ -152,7 +164,7 @@ def BoxUpdateIntervall(parent):
           " you on startup whenever a new plugin or plugin update is " \
           "available. Otherwise, fetching repositories will be " \
           "performed during opening of the {1} window.".format(
-              eg.APP_NAME, PM_NAME
+              eg.APP_NAME, eg.PM_NAME
           )
 
     sb = wx.StaticBox(parent)
@@ -337,8 +349,9 @@ class PanelSettings(wx.Panel):
 
 
 class PluginManagerDialog(wx.Frame):
+    @eg.LogIt
     def __init__(self, *args, **kwargs):
-        super(PluginManagerDialog, self).__init__(None, title=PM_NAME)
+        super(PluginManagerDialog, self).__init__(None, title=eg.PM_NAME)
 
         self._sortmode = LB_SORT_ASCENDING | LB_SORT_BY_NAME
 
@@ -367,6 +380,7 @@ class PluginManagerDialog(wx.Frame):
 
         self.Bind(wx.EVT_SHOW, self.AfterShown)
 
+    @eg.LogIt
     def AfterShown(self, event):
         event.Skip()
         wx.CallAfter(self.Refresh)
@@ -376,6 +390,7 @@ class PluginManagerDialog(wx.Frame):
         eg.pluginManager.onManagerClose()
         eg.pluginManagerDialog.Hide()
 
+    @eg.LogIt
     def UpdatePluginList(self, sortmode=None):
         if not sortmode:
             sortmode = self._sortmode
@@ -399,14 +414,17 @@ class PluginManagerDialog(wx.Frame):
         self.RefreshList(plugin_list)
 
     @staticmethod
+    @eg.LogIt
     def SortByName(plugins):
         plugins.sort(cmp=lambda x, y: cmp(x.name, y.name))
 
     @staticmethod
+    @eg.LogIt
     def SortByStatus(plugins):
         plugins.sort(cmp=lambda x, y: cmp(x.status, y.status))
 
     @staticmethod
+    @eg.LogIt
     def RefreshList(plugins):
         ulc = wx.FindWindowByName("PM_PluginList")
         ulc.Freeze()
@@ -437,6 +455,7 @@ class PluginManagerDialog(wx.Frame):
         ulc.Thaw()
 
     @staticmethod
+    @eg.LogIt
     def UpdateRepositoriesList(repositories):
         lst = wx.FindWindowByName("PM_ctrl_Repos")
         lst.DeleteAllItems()
@@ -510,6 +529,3 @@ class PluginManagerDialog(wx.Frame):
             "PM_btn_Uninstall",
             plugin_info.status in ["newer", "upgradeable", "installed"]  # "orphan"
         )
-
-
-

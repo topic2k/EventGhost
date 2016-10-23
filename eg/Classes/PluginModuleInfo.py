@@ -43,10 +43,10 @@ class PluginModuleInfo(object):
     createMacrosOnAdd = False
     icon = eg.Icons.PLUGIN_ICON
     url = None
-    englishName = None  # TODO: needed why? (topic2k)
+    englishName = name  # TODO: needed why? (topic2k)
     englishDescription = None  # TODO: needed why? (topic2k)
     path = None
-    pluginName = None
+    pluginName = name
     hardwareId = ""
     valid = False
     # --- new ---
@@ -68,6 +68,12 @@ class PluginModuleInfo(object):
     installed = False
     status = "unknown"  # Will be overwritten, if any available version found.
     dependencies = None
+    # --- will be set by PluginManager
+    library = None
+    readOnly = None
+    error = None
+    error_details = None
+    downloadUrl = None
 
     def __init__(self, path, local_plugin=True):
         self.description = self.path = path
@@ -110,7 +116,7 @@ class PluginModuleInfo(object):
 
     def RegisterPlugin(
         self,
-        name = None,
+        name = name,
         description = None,
         kind = u"other",
         author = u"",
@@ -151,6 +157,12 @@ class PluginModuleInfo(object):
         self.installed = False
         self.status = "unknown"  # Will be overwritten, if any available version found.
         self.dependencies = None
+        # --- will be set by PluginManager
+        self.library = None
+        self.readOnly = None
+        self.error = None
+        self.error_details = None
+        self.downloadUrl = None
 
         # Mark core plugins as readonly
         self.readOnly = self.path.startswith(eg.pluginDirs[0])

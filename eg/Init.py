@@ -127,6 +127,8 @@ def InitGui():
         windll.kernel32.RegisterApplicationRestart(args, 8)
 
     eg.Print(eg.text.MainFrame.Logger.welcomeText)
+    eg.pluginManager.UpdateCheck()
+
 
 def InitPathsAndBuiltins():
     sys.path.insert(0, eg.mainDir.encode('mbcs'))
