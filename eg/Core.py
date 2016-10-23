@@ -47,6 +47,7 @@ import eg
 import Init
 
 eg.APP_NAME = "EventGhost"
+eg.PM_NAME = "{0} Plugin Manager".format(eg.APP_NAME)
 eg.CORE_PLUGIN_GUIDS = (
     "{9D499A2C-72B6-40B0-8C8C-995831B10BB4}",  # "EventGhost"
     "{A21F443B-221D-44E4-8596-E1ED7100E0A4}",  # "System"
