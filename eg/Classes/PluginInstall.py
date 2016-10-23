@@ -203,7 +203,7 @@ class PluginInstall(object):
             if not quiet:
                 rc = self.ShowPluginOverview(pluginData, basePath)
                 if rc == wx.ID_CANCEL:
-                    return
+                    return wx.ID_CANCEL
 
             guid = pluginData['guid']
             if guid in eg.pluginManager.plugins.local_cache:
@@ -230,6 +230,7 @@ class PluginInstall(object):
             shutil.rmtree(tmpDir, True)
             #from eg.WinApi.Dynamic import ExitProcess
             #ExitProcess(0)
+        return wx.ID_OK
 
     def ShowPluginOverview(self, pluginData, basePath):
         dialog = PluginOverviewDialog(
@@ -300,7 +301,7 @@ class PluginOverviewDialog(Dialog):
 
         self.SetSize((400, 500))
         self.SetMinSize(self.GetSize())
-        self.Center()
+        #self.Center()
 #        self.SetSizerAndFit(mainSizer)
 #        self.Bind(wx.EVT_SIZE, self.OnSize)
 #        self.Layout()

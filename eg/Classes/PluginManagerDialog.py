@@ -25,11 +25,9 @@ import wx.lib.newevent
 import wx.richtext
 from wx.lib.splitter import MultiSplitterWindow
 
-from ObjectListView import ColumnDefn, ObjectListView
-
 import eg
-from .PluginManagerSettings import PLUGIN_DETAILS_HTML_STYLE, PM_NAME, \
-    VIEWS, DEFAULT_VIEW, Config
+from .PluginManagerSettings import Config, DEFAULT_VIEW, \
+    PLUGIN_DETAILS_HTML_STYLE, PM_NAME, VIEWS
 
 UPDATE_CHECK_CHOICES = {
     0: "on every call of PluginManager",
@@ -88,17 +86,32 @@ def GetCheckingInterval():
     return interval
 
 
+def UpdateView(lst, guid):
+    view = eg.pluginManagerDialog.GetViewType()
+    if view != "All plugins":
+        DoViewChange()
+    else:
+        for item_id in range(lst.GetItemCount()):
+            item_guid = lst.GetItemData(item_id)
+            if item_guid == guid:
+                lst.Select(item_id)
+                break
+
+
 def OnUninstall(event):
     lst = wx.FindWindowByName("PM_PluginList")
-    guid = lst.GetItem(lst.GetFirstSelected()).GetData()
-    eg.pluginManager.uninstallPlugin(guid)
-
+    selected = lst.GetFirstSelected()
+    if selected == -1:
+        return
+    guid = lst.GetItem(selected).GetData()
+    eg.pluginManager.UninstallPlugin(guid)
+    UpdateView(lst, guid)
 
 def OnInstall(event):
     lst = wx.FindWindowByName("PM_PluginList")
     guid = lst.GetItem(lst.GetFirstSelected()).GetData()
-    eg.pluginManager.installPlugin(guid)
-
+    eg.pluginManager.InstallPlugin(guid)
+    UpdateView(lst, guid)
 
 def OnUpgradeAll(event):
     pass
@@ -109,7 +122,9 @@ def OnViewChange(event):
 
 
 @eg.LogIt
-def DoViewChange(view_type=DEFAULT_VIEW):
+def DoViewChange(view_type=None):
+    if not view_type:
+        view_type = eg.pluginManagerDialog.GetViewType()
     info = PLUGIN_DETAILS_HTML_STYLE + VIEWS[view_type]["desc"]
     eg.pluginManagerDialog.ShowPluginDetails(info)
     eg.pluginManagerDialog.EnableButton("PM_btn_Install", False)
@@ -142,7 +157,7 @@ def BoxUpdateIntervall(parent):
 
     sb = wx.StaticBox(parent)
     chk = wx.CheckBox(
-        sb, wx.ID_ANY, "Check for plugin updates on startup",
+        sb, wx.ID_ANY, "Check for plugin updates",
         name="PM_chk_OnShow"
     )
     chk.Bind(wx.EVT_CHECKBOX, lambda event: OnEventCheckbox(
@@ -166,6 +181,7 @@ def BoxUpdateIntervall(parent):
 
 def BoxRepositories(parent):
     sb = wx.StaticBox(parent)
+    sb.Hide()
     lstRepo = ULC.UltimateListCtrl(sb, wx.ID_ANY, agwStyle=wx.LC_REPORT,
                                    name="PM_ctrl_Repos")
     lstRepo.InsertColumn(0, "Status")
@@ -191,26 +207,6 @@ def BoxRepositories(parent):
     return szr
 
 
-class PanelViewSelection(wx.Panel):
-    def __init__(self, *args, **kwargs):
-        super(PanelViewSelection, self).__init__(*args, **kwargs)
-
-        # lst_view = wx.ListBox(self, wx.ID_ANY, choices=VIEWS.keys(),
-        #                       name="PM_lst_Views")
-        lst_view = wx.Choice(
-            self, wx.ID_ANY, choices=VIEWS.keys(),
-            name="PM_lst_Views"
-        )
-        lst_view.Bind(wx.EVT_LISTBOX, OnViewChange)
-        lst_view.SetSelection(0)
-
-        szr = wx.BoxSizer()
-        szr.Add(lst_view, 1, wx.ALL | wx.EXPAND, 5)
-
-        self.SetSizer(szr)
-        self.Layout()
-
-
 class PanelPluginList(wx.Panel):
     def __init__(self, *args, **kwargs):
         super(PanelPluginList, self).__init__(*args, **kwargs)
@@ -223,39 +219,35 @@ class PanelPluginList(wx.Panel):
         chc_views.SetSelection(0)
 
         ulc_plugins = ULC.UltimateListCtrl(
-            self, wx.ID_ANY,# size=(160,400),
+            self, wx.ID_ANY,
             agwStyle=ULC.ULC_REPORT | ULC.ULC_SINGLE_SEL | ULC.ULC_NO_HEADER,
             name="PM_PluginList"
         )
         ulc_plugins.InsertColumn(0, "plugin")
         ulc_plugins.SetColumnWidth(0, ULC.ULC_AUTOSIZE_FILL)
-        ulc_plugins.Bind(ULC.EVT_LIST_ITEM_SELECTED,
-                     eg.pluginManager.OnPluginSelected)
-
-        # lstPlugins = wx.ListBox(self, wx.ID_ANY, name="PM_PluginList")
-        # lstPlugins.Bind(wx.EVT_LISTBOX, eg.pluginManager.OnPluginSelected)
+        ulc_plugins.Bind(
+            ULC.EVT_LIST_ITEM_SELECTED,
+            eg.pluginManager.OnPluginSelected
+        )
 
         srchLabel = wx.StaticText(self, wx.ID_ANY, "Search")
         searchTxt = wx.TextCtrl(self, wx.ID_ANY, name="PM_ctrl_Search")
         searchTxt.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
-
-        szrLst = wx.BoxSizer(wx.HORIZONTAL)
-        # szrLst.Add(lstPlugins, 1, wx.EXPAND | wx.ALL, 5)
-        szrLst.Add(ulc_plugins, 1, wx.EXPAND | wx.ALL, 5)
 
         szrSearch = wx.BoxSizer(wx.HORIZONTAL)
         szrSearch.Add(srchLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
         szrSearch.Add(searchTxt, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
         szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(chc_views, 0, wx.EXPAND | wx.TOP, 5)
-        szr.Add(szrLst, 1, wx.ALL | wx.EXPAND, 5)
+        szr.Add(chc_views, 0, wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, 5)
+        szr.Add(ulc_plugins, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 5)
         szr.Add(szrSearch, 0, wx.ALL | wx.EXPAND, 5)
         szr.Hide(szrSearch, True)
         self.SetSizer(szr)
         self.Layout()
 
-    def OnSearch(self, event):
+    @staticmethod
+    def OnSearch(event):
         event.Skip()
 
 
@@ -346,49 +338,33 @@ class PanelSettings(wx.Panel):
 
 class PluginManagerDialog(wx.Frame):
     def __init__(self, *args, **kwargs):
-        #kwargs.update({"style": wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER})
         super(PluginManagerDialog, self).__init__(None, title=PM_NAME)
 
         self._sortmode = LB_SORT_ASCENDING | LB_SORT_BY_NAME
 
-        maimain_bookBook = wx.Notebook(self, wx.ID_ANY)
+        notebook = wx.Notebook(self, wx.ID_ANY)
         page_plugins = MultiSplitterWindow(
-            maimain_bookBook, style=wx.SP_LIVE_UPDATE
+            notebook, style=wx.SP_LIVE_UPDATE
         )
-        page_settings = PanelSettings(maimain_bookBook)
+        page_settings = PanelSettings(notebook)
 
-        #pnlView = PanelViewSelection(page_plugins)
         pnlPluginlist = PanelPluginList(page_plugins)
         pnlDetailsAndAction = PanelDetailsAndAction(page_plugins)
-        #page_plugins.AppendWindow(pnlView, 150)
         page_plugins.AppendWindow(pnlPluginlist, 180)
         page_plugins.AppendWindow(pnlDetailsAndAction)
 
-        maimain_bookBook.AddPage(page_plugins, "Plugins", True)
-        maimain_bookBook.AddPage(page_settings, "Settings", False)
+        notebook.AddPage(page_plugins, "Plugins", True)
+        notebook.AddPage(page_settings, "Settings", False)
 
-        stLine = wx.StaticLine(self, wx.ID_ANY, style=wx.LI_HORIZONTAL)
-        btnDlgOk = wx.Button(self, wx.ID_OK)
-        btnDlgOk.Bind(wx.EVT_BUTTON, self.OnDlgOk, id=wx.ID_OK)
-        btnDlgHelp = wx.Button(self, wx.ID_HELP)
-        #btnDlgHelp.Bind(wx.EVT_BUTTON, self.OnDlgHelp, id=wx.ID_HELP)
         self.Bind(wx.EVT_CLOSE, self.OnDlgClose)
 
-        szrDlgBtn = wx.StdDialogButtonSizer()
-        szrDlgBtn.AddButton(btnDlgOk)
-        szrDlgBtn.AddButton(btnDlgHelp)
-        szrDlgBtn.Realize()
-
         szr = wx.BoxSizer(wx.VERTICAL)
-        szr.Add(maimain_bookBook, 1, wx.EXPAND | wx.ALL, 5)
-        szr.Add(stLine, 0, wx.EXPAND | wx.ALL, 5)
-        szr.Add(szrDlgBtn, 0, wx.ALL | wx.EXPAND, 15)
+        szr.Add(notebook, 1, wx.EXPAND | wx.ALL, 5)
 
         self.SetSizer(szr)
-        self.SetSize((900, 680))
+        self.SetSize((650, 550))
         self.Layout()
 
-        self.html_details = self.FindWindowByName("PM_html_PluginDetails")
         self.Bind(wx.EVT_SHOW, self.AfterShown)
 
     def AfterShown(self, event):
@@ -396,48 +372,9 @@ class PluginManagerDialog(wx.Frame):
         wx.CallAfter(self.Refresh)
 
     @eg.LogIt
-    def OnDlgOk(self, event):
-        eg.pluginManager.onManagerClose()
-        self.Hide()
-
-    @eg.LogIt
     def OnDlgClose(self, event):
         eg.pluginManager.onManagerClose()
         eg.pluginManagerDialog.Hide()
-
-    # def OnListRightClick(self, event):
-    #     menu_list = (
-    #         (
-    #             (LB_SORT_ASCENDING | LB_SORT_BY_NAME),
-    #             "sort by name (ascending)"
-    #         ),
-    #         (
-    #             (LB_SORT_DESCENDING | LB_SORT_BY_NAME),
-    #             "sort by name (descending)"
-    #         ),
-    #         (
-    #             (LB_SORT_ASCENDING | LB_SORT_BY_STATUS),
-    #             "sort by status (ascending)"
-    #         ),
-    #         (
-    #             (LB_SORT_DESCENDING | LB_SORT_BY_STATUS),
-    #             "sort by status (descending)"
-    #         ),
-    #     )
-    #
-    #     mnu = wx.Menu()
-    #     for wxid, label in menu_list:
-    #         mnu.Append(wx.ID_HIGHEST + 1000 + wxid, label)
-    #
-    #     # self.Bind(wx.EVT_MENU, lambda event:
-    #     #     self.OnPaste(rcRow, rcCol, text), mn)
-    #     mnu.Bind(wx.EVT_MENU, self.OnListPopupMenu)
-    #     self.PopupMenu(mnu)
-    #     mnu.Destroy()
-    #
-    # def OnListPopupMenu(self, event):
-    #     sortmode = event.GetId() - wx.ID_HIGHEST - 1000
-    #     self.UpdatePluginList(sortmode)
 
     def UpdatePluginList(self, sortmode=None):
         if not sortmode:
@@ -461,21 +398,20 @@ class PluginManagerDialog(wx.Frame):
             plugin_list.reverse()
         self.RefreshList(plugin_list)
 
-    def SortByName(self, plugins):
+    @staticmethod
+    def SortByName(plugins):
         plugins.sort(cmp=lambda x, y: cmp(x.name, y.name))
 
-    def SortByStatus(self, plugins):
+    @staticmethod
+    def SortByStatus(plugins):
         plugins.sort(cmp=lambda x, y: cmp(x.status, y.status))
 
-    def RefreshList(self, plugins):
-        # lst_plugins = wx.FindWindowByName("PM_PluginList")
+    @staticmethod
+    def RefreshList(plugins):
         ulc = wx.FindWindowByName("PM_PluginList")
         ulc.Freeze()
         ulc.DeleteAllItems()
-        # lst_plugins.Freeze()
-        # lst_plugins.Clear()
         for info in plugins:
-            # lst_plugins.Append(info.name, info.guid)
             idx = ulc.Append([info.name])
             item = ulc.GetItem(idx)
             item.SetData(info.guid)
@@ -498,10 +434,10 @@ class PluginManagerDialog(wx.Frame):
                 # item.SetTextColour(wx.Colour(0, 136, 0))
                 item.SetBackgroundColour(wx.Colour(255, 255, 204))
             ulc.SetItem(item)
-        # lst_plugins.Thaw()
         ulc.Thaw()
 
-    def UpdateRepositoriesList(self, repositories):
+    @staticmethod
+    def UpdateRepositoriesList(repositories):
         lst = wx.FindWindowByName("PM_ctrl_Repos")
         lst.DeleteAllItems()
         all_repos = repositories.GetAllRepos()
@@ -522,17 +458,58 @@ class PluginManagerDialog(wx.Frame):
         lst.SetColumnWidth(1, ULC.ULC_AUTOSIZE)
         lst.SetColumnWidth(2, ULC.ULC_AUTOSIZE_FILL)
 
-    def ShowPluginDetails(self, plugin_details_html):
-        self.html_details.SetPage(plugin_details_html, "")
+    @staticmethod
+    def ShowPluginDetails(plugin_details_html):
+        html_details = wx.FindWindowByName("PM_html_PluginDetails")
+        html_details.SetPage(plugin_details_html, "")
 
-    def SetButtonLabel(self, button, label):
-        btn = wx.FindWindowByName(button)
-        btn.SetLabel(label)
-
-    def EnableButton(self, button, enable):
+    @staticmethod
+    def EnableButton(button, enable):
         btn = wx.FindWindowByName(button)
         btn.Enable(enable)
 
-    def GetViewType(self):
+    @staticmethod
+    def GetViewType():
         lst = wx.FindWindowByName("PM_lst_Views")
         return lst.GetStringSelection() or DEFAULT_VIEW
+
+    @staticmethod
+    def SetButtonLabel(button, label):
+        btn = wx.FindWindowByName(button)
+        btn.SetLabel(label)
+
+    def AdoptButtons(self, plugin_info):
+        #  Set buttonInstall text (and sometimes focus)
+        if plugin_info.status == "upgradeable":
+            self.SetButtonLabel(
+                "PM_btn_Install", "Upgrade Plugin")
+        elif plugin_info.status == "newer":
+            self.SetButtonLabel(
+                "PM_btn_Install", "Downgrade Plugin")
+        elif plugin_info.status == "not installed" or \
+                plugin_info.status == "new":
+            self.SetButtonLabel(
+                "PM_btn_Install", "Install Plugin")
+        else:
+            # Default (will be grayed out if not available for reinstallation)
+            self.SetButtonLabel(
+                "PM_btn_Install", "Reinstall Plugin")
+
+        # Enable/disable buttons
+        core = plugin_info.kind == "core"
+        self.EnableButton(
+            "PM_btn_Install",
+            (
+                plugin_info.status != "orphan" or (
+                    plugin_info.status != "not installed" and
+                    plugin_info.status != "new"
+                )
+            ) and not core
+        )
+        self.EnableButton(
+            "PM_btn_Uninstall",
+            plugin_info.status in ["newer", "upgradeable", "installed"]  # "orphan"
+        )
+
+
+

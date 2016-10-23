@@ -150,8 +150,8 @@ class PluginManager:
             if dlg.ShowModal() != wx.ID_YES:
                 return
             # uninstall, update utils and reload if enabled
-            self.uninstallPlugin(key)
-            self.installPlugin(key)
+            self.UninstallPlugin(key)
+            self.InstallPlugin(key)
 
     @eg.LogIt
     def fetchAvailablePlugins(self, reloadMode):
@@ -341,43 +341,7 @@ class PluginManager:
         html += "</body>"
 
         eg.pluginManagerDialog.ShowPluginDetails(html)
-        self.AdoptButtons(plugin_info)
-
-    def AdoptButtons(self, plugin_info):
-        #  Set buttonInstall text (and sometimes focus)
-        if plugin_info.status == "upgradeable":
-            eg.pluginManagerDialog.SetButtonLabel(
-                "PM_btn_Install", "Upgrade Plugin")
-        elif plugin_info.status == "newer":
-            eg.pluginManagerDialog.SetButtonLabel(
-                "PM_btn_Install", "Downgrade Plugin")
-        elif plugin_info.status == "not installed" or \
-                plugin_info.status == "new":
-            eg.pluginManagerDialog.SetButtonLabel(
-                "PM_btn_Install", "Install Plugin")
-        else:
-            # Default (will be grayed out if not available for reinstallation)
-            eg.pluginManagerDialog.SetButtonLabel(
-                "PM_btn_Install", "Reinstall Plugin")
-
-        # Enable/disable buttons
-        core = plugin_info.kind == "core"
-        eg.pluginManagerDialog.EnableButton(
-            "PM_btn_Install",
-            (
-                plugin_info.status != "orphan" or (
-                    plugin_info.status != "not installed" and
-                    plugin_info.status != "new"
-                )
-            ) and not core
-        )
-        eg.pluginManagerDialog.EnableButton(
-            "PM_btn_Uninstall",
-            plugin_info.status in ["newer", "upgradeable", "installed"]  # "orphan"
-        )
-        # hide = not ((metadata.status == "not installed") or
-        #         (metadata.status == "new") and not core)
-        # self.btn_uninstall.Show(hide)
+        eg.pluginManagerDialog.AdoptButtons(plugin_info)
 
     @eg.LogIt
     def reloadAndExportData(self):
@@ -392,13 +356,13 @@ class PluginManager:
         self.plugins.updateSeenPluginsList()
 
     @eg.LogIt
-    def upgradeAllUpgradeable(self):
+    def UpgradeAllUpgradeable(self):
         """ Reinstall all upgradeable plugins """
         for key in self.plugins.GetAllUpgradeable():
-            self.installPlugin(key)
+            self.InstallPlugin(key)
 
     @eg.LogIt
-    def installPlugin(self, guid):
+    def InstallPlugin(self, guid):
         """ Install given plugin """
         pluginInfo = self.plugins.GetAll()[guid]
         if not pluginInfo:
@@ -419,7 +383,7 @@ class PluginManager:
         url = self.plugins.GetDownloadUrl(guid)
         downloadedFile = self.DownloadFile(url)
         try:
-            eg.PluginInstall.Import(filepath=downloadedFile)
+            rc = eg.PluginInstall.Import(filepath=downloadedFile)
         except BadZipfile:
             with open(downloadedFile, "rt") as f:
                 txt = f.read()
@@ -439,6 +403,8 @@ class PluginManager:
                     style=wx.OK | wx.ICON_ERROR
                 )
             return
+        if rc == wx.ID_CANCEL:
+            return
         self.UpdateLists()
         eg.MessageBox(
             "Plugin '{0}' was successfully installed.\n"
@@ -450,7 +416,7 @@ class PluginManager:
         )
 
     @eg.LogIt
-    def uninstallPlugin(self, guid):
+    def UninstallPlugin(self, guid):
         """ Uninstall given plugin """
         actionItemCls = eg.document.ActionItem
         def SearchFunc(obj):
