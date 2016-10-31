@@ -47,7 +47,6 @@ import eg
 import Init
 
 eg.APP_NAME = "EventGhost"
-eg.PM_NAME = "{0} Plugin Manager".format(eg.APP_NAME)
 eg.CORE_PLUGIN_GUIDS = (
     "{9D499A2C-72B6-40B0-8C8C-995831B10BB4}",  # "EventGhost"
     "{A21F443B-221D-44E4-8596-E1ED7100E0A4}",  # "System"
@@ -353,6 +352,8 @@ eg.app = eg.App()
 import Icons  # NOQA
 eg.Icons = Icons
 
+eg.config = eg.Config()
+eg.debugLevel = int(eg.config.logDebug) or eg.startupArguments.debugLevel
 eg.log = eg.Log()
 eg.Print = eg.log.Print
 eg.PrintError = eg.log.PrintError
@@ -366,8 +367,6 @@ def TracebackHook(tType, tValue, traceback):
 sys.excepthook = TracebackHook
 
 eg.colour = eg.Colour()
-eg.config = eg.Config()
-eg.debugLevel = int(eg.config.logDebug)
 if eg.startupArguments.isMain and not eg.startupArguments.translate:
     eg.text = eg.Text(eg.config.language)
 else:
@@ -375,7 +374,6 @@ else:
 eg.actionThread = eg.ActionThread()
 eg.eventThread = eg.EventThread()
 eg.pluginManager = eg.PluginManager()
-eg.pluginManagerDialog = eg.PluginManagerDialog()
 eg.scheduler = eg.Scheduler()
 
 eg.TriggerEvent = eg.eventThread.TriggerEvent

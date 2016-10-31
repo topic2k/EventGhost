@@ -355,6 +355,7 @@ class MainFrame(wx.Frame):
         Append("WebWiki")
         menu.AppendSeparator()
         Append("CheckUpdate")
+        Append("CheckUpdatePlugins")
         menu.AppendSeparator()
         Append("PythonShell", "\tShift+Ctrl+I")
         menu.AppendSeparator()
@@ -957,7 +958,10 @@ class MainFrame(wx.Frame):
         webbrowser.open("http://www.eventghost.org/mediawiki/", 2, 1)
 
     def OnCmdCheckUpdate(self):
-        eg.CheckUpdate.CheckUpdateManually()
+        eg.CheckUpdate.MainProgManually()
+
+    def OnCmdCheckUpdatePlugins(self):
+        eg.CheckUpdate.PluginsManually()
 
     def OnCmdPythonShell(self):
         if eg.pyCrustFrame:

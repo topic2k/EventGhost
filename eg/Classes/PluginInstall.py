@@ -56,25 +56,15 @@ TEMPLATE = u"""
 <b>Description:</b>"""
 
 INFO_FIELDS = [
-    "name",
     "author",
-    "version",
-    "url",
-    "guid",
     "description",
-    "icon",
-    # --- new ---
-    "longDescription",
-    "pluginHelp",
+    "guid",
     "hardwareId",
-    "egMinVersion",
-    "egMaxVersion",
-    "experimental",
-    "deprecated",
+    "icon",
     "kind",
-    "issuesUrl",
-    "codeUrl",
-    "changelog",
+    "name",
+    "url",
+    "version",
 ]
 
 
@@ -106,17 +96,6 @@ class PluginInstall(object):
     @eg.LogItWithReturn
     def Export(self, pluginInfo):
         pluginData = self.GetPluginData(pluginInfo)
-        #dialog = PluginOverviewDialog(
-        #    eg.document.frame,
-        #    "Plugin Information",
-        #    pluginData=pluginData,
-        #    basePath=pluginInfo.path,
-        #    message="Do you want to save this plugin as a plugin file?"
-        #)
-        #result = dialog.ShowModal()
-        #dialog.Destroy()
-        #if result == wx.ID_CANCEL:
-        #    return
         filename = os.path.basename(pluginInfo.path)
         title = eg.text.MainFrame.Menu.Export.replace("&", "").replace(".", "")
         dialog = wx.FileDialog(
@@ -171,17 +150,8 @@ class PluginInstall(object):
             "description": description,
             "icon": iconData,
             # --- new ---
-            "longDescription": pluginInfo.longDescription,
-            "pluginHelp": pluginInfo.pluginHelp,
             "hardwareId": pluginInfo.hardwareId,
-            "egMinVersion": pluginInfo.egMinVersion,
-            "egMaxVersion": pluginInfo.egMaxVersion,
-            "experimental": pluginInfo.experimental,
-            "deprecated": pluginInfo.deprecated,
             "kind": pluginInfo.kind,
-            "issuesUrl": pluginInfo.issuesUrl,
-            "codeUrl": pluginInfo.codeUrl,
-            "changelog": pluginInfo.changelog,
         }
 
     @eg.LogItWithReturn

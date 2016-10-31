@@ -189,8 +189,14 @@ class Document(object):
     def CmdAddPlugin(self):
         result = eg.AddPluginDialog.GetModalResult(self.frame)
         if result:
+            info = result[0]
+            if not os.path.isdir(info.path):
+                # The plugin info comes from online repository, so
+                # first install (download) the plugin.
+                eg.pluginManager.InstallPlugin(info.guid, quiet=True)
+                info = eg.pluginManager.GetPluginInfo(info.guid)
             try:
-                eg.UndoHandler.NewPlugin(self).Do(result[0])
+                eg.UndoHandler.NewPlugin(self).Do(info)
             except eg.Exceptions.PluginLoadError:
                 pass
 

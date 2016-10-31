@@ -46,17 +46,26 @@ class Section:
 
 
 class Config(Section):
-    version = eg.Version.string
-    language = GetClosestLanguage()
+    autoUpdateEG = False
+    autoUpdateEGPreRelease = False
+    autoUpdatePlugins = False
+    autoUpdatePluginsList = set()
     autoloadFilePath = False
-    checkUpdate = True
     checkPreRelease = False
+    checkUpdateEGContinuous = True
+    checkUpdateEGInterval = 7
+    checkUpdateEGOnStart = True
+    checkUpdatePluginContinuous = True
+    checkUpdatePluginInterval = 7
+    checkUpdatePluginOnStart = True
     colourPickerCustomColours = [(-1, -1, -1, 255) for n in range(16)]
     confirmDelete = True
     defaultThreadStartTimeout = 5.00
     hideOnClose = False
     hideOnStartup = False
-    lastUpdateCheckDate = None
+    language = GetClosestLanguage()
+    lastUpdateCheckDateEG = None
+    lastUpdateCheckDatePlugins = None
     lastUpdateCheckVersion = None
     limitMemory = False
     limitMemorySize = 8
@@ -68,6 +77,7 @@ class Config(Section):
     refreshEnv = False
     showTrayIcon = True
     useFixedFont = False
+    version = eg.Version.string
 
     class plugins:  #pylint: disable-msg=C0103
         pass
