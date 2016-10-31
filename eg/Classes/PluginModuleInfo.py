@@ -20,8 +20,6 @@ import os
 import sys
 from os.path import exists, join
 
-from pkg_resources import parse_version
-
 import eg
 
 
@@ -33,53 +31,28 @@ class PluginModuleInfo(object):
     eg.RegisterPlugin call inside the plugin module. So it imports the main
     module, but stops the import immediately after the eg.RegisterPlugin call.
     """
-    name = u"Unknown Plugin"
-    description = u""
     author = u""
-    version = u""
-    kind = u"other"
-    guid = ""
     canMultiLoad = False
     createMacrosOnAdd = False
-    icon = eg.Icons.PLUGIN_ICON
-    url = None
-    englishName = name  # TODO: needed why? (topic2k)
-    englishDescription = None  # TODO: needed why? (topic2k)
-    path = None
-    pluginName = name
+    description = u""
+    download_url = ""
+    englishDescription = u""
+    englishName = u""
+    guid = ""
     hardwareId = ""
-    valid = False
-    # --- new ---
-    longDescription = None
-    pluginHelp = ""
-    egVersion = ">={0}.{1}".format(eg.Version.major, eg.Version.minor)  # use pip versionChecker (e.g. >0.4.0, <0.6.0)
-    egMinVersion = "0.0.0"
-    egMaxVersion = "999.999.999"
-    experimental = False
-    deprecated = False
-    issuesUrl = None
-    codeUrl = None
-    changelog = None
+    icon = eg.Icons.PLUGIN_ICON
+    kind = "other"
+    name = u""
+    path = ""
+    pluginName = u""
+    status = "unknown"
+    url = ""
+    version = ""
     versionAvailable = ""
-    zipRepository = ""
-    download_url = None
-    filename = ""
-    available = False  # Will be overwritten, if any available version found.
-    installed = False
-    status = "unknown"  # Will be overwritten, if any available version found.
-    dependencies = None
-    # --- will be set by PluginManager
-    library = None
-    readOnly = None
-    error = None
-    error_details = None
-    downloadUrl = None
 
-    def __init__(self, path, local_plugin=True):
+    def __init__(self, path):
         self.description = self.path = path
         self.name = self.pluginName = os.path.basename(path)
-        if not local_plugin:
-            return
         originalRegisterPlugin = eg.RegisterPlugin
         eg.RegisterPlugin = self.RegisterPlugin
         sys.path.insert(0, self.path)
@@ -98,7 +71,6 @@ class PluginModuleInfo(object):
             # RegisterPluginException because eg.RegisterPlugin() is called
             # inside the module
             self.status = "installed"
-            self.valid = True
         except:
             if eg.debugLevel:
                 eg.PrintTraceback(eg.text.Error.pluginLoadError % self.path)
@@ -116,65 +88,23 @@ class PluginModuleInfo(object):
 
     def RegisterPlugin(
         self,
-        name = name,
-        description = None,
-        kind = u"other",
-        author = u"",
-        version = u"",
-        icon = None,
-        canMultiLoad = False,
-        createMacrosOnAdd = False,
-        url = None,
-        help = None,
-        guid = "",
-        hardwareId = "",
-        # --- new ---
-        longDescription=None,
-        experimental=False,
-        deprecated=False,
-        issuesUrl=None,
-        codeUrl=None,
-        pluginHelp=None,
-        egVersion = ">={0}.{1}".format(eg.Version.major, eg.Version.minor),  # use pip versionChecker (e.g. >0.4.0, <0.6.0)
-        egMinVersion="0.0.0",
-        egMaxVersion="999.999.999",
-        changelog=None,
-        **kwargs
+        author=u"",
+        canMultiLoad=False,
+        createMacrosOnAdd=False,
+        description=u"",
+        guid="",
+        hardwareId="",
+        help=u"",
+        icon=None,
+        kind=u"other",
+        name=u"",
+        url="",
+        version="",
     ):
-        self.experimental = experimental
-        self.deprecated = deprecated
-        self.issuesUrl = issuesUrl
-        self.codeUrl = codeUrl
-        self.egVersion = egVersion
-        self.egMinVersion = egMinVersion
-        self.egMaxVersion = egMaxVersion
-        self.changelog = changelog
         self.versionAvailable = ""
-        self.zipRepository = ""
         self.download_url = self.path
-        self.filename = ""
-        self.available = False  # Will be overwritten, if any available version found.
-        self.installed = False
-        self.status = "unknown"  # Will be overwritten, if any available version found.
-        self.dependencies = None
-        # --- will be set by PluginManager
-        self.library = None
-        self.readOnly = None
-        self.error = None
-        self.error_details = None
-        self.downloadUrl = None
-
-        # Mark core plugins as readonly
-        self.readOnly = self.path.startswith(eg.pluginDirs[0])
-
-        if pluginHelp and not longDescription:
-            self.longDescription = pluginHelp
-        else:
-            self.longDescription = longDescription
-        if pluginHelp:
-            pluginHelp = "\n".join([s.strip() for s in pluginHelp.splitlines()])
-            pluginHelp = pluginHelp.replace("\n\n", "<p>")
-            description += "\n\n<p>" + pluginHelp
+        self.status = "unknown"
+        self.download_url = None
 
         if not name:
             name = self.pluginName
@@ -191,16 +121,6 @@ class PluginModuleInfo(object):
             unicode(", ".join(author)) if isinstance(author, tuple)
             else unicode(author)
         )
-        error = None
-        errorDetails = None
-        eg_min = parse_version(egMinVersion)
-        eg_max = parse_version(egMaxVersion)
-        eg_ver = parse_version(eg.Version.base)
-        if not (eg_min <= eg_ver <= eg_max):
-            error = "incompatible"
-            errorDetails = "{0} - {1}".format(egMinVersion, egMaxVersion)
-        self.error = error
-        self.error_details = errorDetails
         self.version = unicode(version)
 
         self.canMultiLoad = canMultiLoad
