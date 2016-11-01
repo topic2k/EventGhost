@@ -129,8 +129,12 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_ICONIZE, self.OnIconize)
         self.Bind(wx.EVT_MENU_OPEN, self.OnMenuOpen)
         self.Bind(wx.EVT_CLOSE, self.OnClose)
+
+        # only update the ratio value when not resizing
         self.mainSizeFlag = True
+        # only update the ratio value when log ctrl is docked
         self.ratioLock = False
+        # keep the ratio of log and config ctrls
         self.ratio = Config.ratio
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_MOVE, self.OnMove)
@@ -291,8 +295,6 @@ class MainFrame(wx.Frame):
         # edit menu
         menu = wx.Menu()
         menuBar.Append(menu, text.EditMenu)
-        Append("PluginManager")
-        menu.AppendSeparator()
         Append("Undo", "\tCtrl+Z")
         Append("Redo", "\tCtrl+Y")
         menu.AppendSeparator()
@@ -830,10 +832,6 @@ class MainFrame(wx.Frame):
     def OnCmdCopy(self):
         self.DispatchCommand("OnCmdCopy")
 
-    @eg.AsTasklet
-    def OnCmdPluginManager(self):
-        eg.pluginManager.ShowPluginManager(self)
-
     def OnCmdPython(self):
         self.DispatchCommand("OnCmdPython")
 
@@ -958,7 +956,7 @@ class MainFrame(wx.Frame):
         webbrowser.open("http://www.eventghost.org/mediawiki/", 2, 1)
 
     def OnCmdCheckUpdate(self):
-        eg.CheckUpdate.MainProgManually()
+        eg.CheckUpdate.EGManually()
 
     def OnCmdCheckUpdatePlugins(self):
         eg.CheckUpdate.PluginsManually()

@@ -226,14 +226,8 @@ class PluginCache(object):
     def IsThereAnythingNew(self):
         """ return true if an upgradeable or new plugin detected """
         new_plugins = {"new": [], "upgradeable": []}
-        last_check = wx.DateTime_Today()
-        if eg.config.lastUpdateCheckDatePlugins:
-            last_check.ParseISODate(eg.config.lastUpdateCheckDatePlugins)
         for plugin_info in self.plugin_cache.values():
-            if (
-                plugin_info.status in ["upgradeable", "new"]
-                and last_check < wx.DateTime_Today()
-            ):
+            if plugin_info.status in ["upgradeable", "new"]:
                 new_plugins[plugin_info.status].append(plugin_info)
         return new_plugins
 

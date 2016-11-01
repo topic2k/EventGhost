@@ -43,70 +43,70 @@ class Text(eg.TranslatableStrings):
 
 class CheckUpdate(object):
     def __init__(self):
-        self._timerEG = UpdateCheckTimerEG()
-        self._timerPlugins = UpdateCheckTimerPlugins()
+        self.timerEG = UpdateCheckTimer(
+            "CheckUpdateEG", _checkUpdateMainProg
+        )
+        self.timerPlugins = UpdateCheckTimer(
+            "CheckUpdatePlugins", eg.pluginManager.UpdateCheck
+        )
 
         if eg.config.checkUpdateEGOnStart:
-            # avoid more than one check per day
-            today = wx.DateTime_Today()
-            last = wx.DateTime()
-            try:
-                last.ParseISODate(eg.config.lastUpdateCheckDateEG)
-            except TypeError:
-                pass
-            if last != today:
-                eg.config.lastUpdateCheckDateEG = today.FormatISODate()
-                wx.CallAfter(self.MainProg)
+            self.RequestCheck(
+                "lastUpdateCheckDateEG",
+                "CheckUpdateEG",
+                _checkUpdateMainProg
+            )
 
         if eg.config.checkUpdatePluginOnStart:
-            wx.CallAfter(self.Plugins)
+            self.RequestCheck(
+                "lastUpdateCheckDatePlugins",
+                "CheckUpdatePlugins",
+                eg.pluginManager.UpdateCheck
+            )
 
         if eg.config.checkUpdateEGContinuous:
-            self.StartContinuousMainProg()
+            self.StartContinuous("EG")
 
         if eg.config.checkUpdatePluginContinuous:
-            self.StartContinuousPlugins()
-
+            self.StartContinuous("Plugins")
 
     @eg.LogIt
-    def StartContinuousMainProg(self):
+    def RequestCheck(self, attr, name, func):
+        today = wx.DateTime_Today()
+        last = wx.DateTime()
+        try:
+            last.ParseISODate(getattr(eg.config, attr))
+        except TypeError:
+            pass
+        # avoid more than one check per day
+        if last != today:
+            setattr(eg.config, attr, today.FormatISODate())
+            wx.CallAfter(
+                self.CheckerThread,
+                func,
+                name
+            )
+
+    @eg.LogIt
+    def StartContinuous(self, attr):
         # millisecond * second * minute * hour * day
         ms = 1000 * 1 * 60 * 60 * 24
-        self._timerEG.Start(ms, oneShot=wx.TIMER_CONTINUOUS)
+        getattr(self, "timer" + attr).Start(ms, oneShot=wx.TIMER_CONTINUOUS)
 
     @eg.LogIt
-    def StartContinuousPlugins(self):
-        # millisecond * second * minute * hour * day
-        ms = 1000 * 1 * 60 * 60 * 24
-        self._timerPlugins.Start(ms, oneShot=wx.TIMER_CONTINUOUS)
+    def StopContinuous(self, attr):
+        getattr(self, "timer"+attr).Stop()
 
-    @eg.LogIt
-    def StopContinuousMainProg(self):
-        self._timerEG.Stop()
-
-    @eg.LogIt
-    def StopContinuousPlugins(self):
-        self._timerPlugins.Stop()
-
-    @eg.LogIt
     @staticmethod
-    def MainProg():
+    def CheckerThread(func, name):
         threading.Thread(
-            target=_checkUpdateMainProg,
-            name="CheckUpdateEG"
+            target=func,
+            name=name
         ).start()
 
     @staticmethod
-    def MainProgManually():
+    def EGManually():
         _checkUpdateMainProg(manually=True)
-
-    @eg.LogIt
-    @staticmethod
-    def Plugins():
-        threading.Thread(
-            target=eg.pluginManager.UpdateCheck,
-            name="CheckUpdatePlugins"
-        ).start()
 
     @staticmethod
     def PluginsManually():
@@ -165,30 +165,24 @@ class MessageDialog(eg.Dialog):
         self.Close()
 
 
-class UpdateCheckTimerEG(wx.Timer):
+class UpdateCheckTimer(wx.Timer):
+    def __init__(self, attr, func, *args, **kwargs):
+        super(UpdateCheckTimer, self).__init__(*args, **kwargs)
+        self.attrInterval = "lastUpdateCheckDate" + attr[11:]
+        self.func = func
+        self.targetName = attr
+
     @eg.LogIt
-    def Notify(*args, **kwargs):
+    def Notify(self, *args, **kwargs):
         today = wx.DateTime_Today()
         last = wx.DateTime()
         try:
-            last.ParseISODate(eg.config.lastUpdateCheckDateEG)
+            last.ParseISODate(getattr(eg.config, self.attrInterval))
         except TypeError:
             last = today
-        if today - last >= wx.TimeSpan_Days(eg.config.checkUpdateEGInterval):
-            eg.checkUpdate.MainProg()
-
-
-class UpdateCheckTimerPlugins(wx.Timer):
-    @eg.LogIt
-    def Notify(*args, **kwargs):
-        today = wx.DateTime_Today()
-        last = wx.DateTime()
-        try:
-            last.ParseISODate(eg.config.lastUpdateCheckDatePlugins)
-        except TypeError:
-            last = today
-        if today - last >= wx.TimeSpan_Days(eg.config.checkUpdatePluginInterval):
-            eg.checkUpdate.Plugins()
+        if today - last >= wx.TimeSpan_Days(getattr(eg.config, self.attrInterval)):
+            setattr(eg.config, self.attrInterval, today.FormatISODate())
+            eg.checkUpdate.CheckerThread(self.func, self.targetName)
 
 
 def CenterOnParent(self):
@@ -215,6 +209,7 @@ def ShowWaitDialog():
     return dialog
 
 
+@eg.LogIt
 def _checkUpdateMainProg(manually=False):
     if eg.Version.string == "WIP":
         if manually:

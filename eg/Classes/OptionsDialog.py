@@ -170,7 +170,7 @@ class OptionsDialog(eg.TaskletDialog):
             text.CheckUpdateContinuos1
         )
         checkUpdateEGIntervalCtrl = page2.SpinIntCtrl(
-            config.checkUpdateEGInterval, min=1
+            config.checkUpdateEGInterval, min=1, max=24  # >24 = BufferOverflow
         )
         checkUpdateEGContinuousCtrl2 = page2.StaticText(
             text.CheckUpdateContinuos2
@@ -184,7 +184,7 @@ class OptionsDialog(eg.TaskletDialog):
             text.CheckUpdateContinuos1
         )
         checkUpdatePluginIntervalCtrl = page2.SpinIntCtrl(
-            config.checkUpdatePluginInterval, min=1
+            config.checkUpdatePluginInterval, min=1, max=24
         )
         checkUpdatePluginContinuousCtrl2 = page2.StaticText(
             text.CheckUpdateContinuos2
@@ -192,16 +192,16 @@ class OptionsDialog(eg.TaskletDialog):
 
         def OnCheckContinuousEG(event):
             if event.IsChecked():
-                eg.checkUpdate.StartContinuousMainProg()
+                eg.checkUpdate.StartContinuous("EG")
             else:
-                eg.checkUpdate.StopContinuousMainProg()
+                eg.checkUpdate.StopContinuous("EG")
         checkUpdateEGContinuousCtrl1.Bind(wx.EVT_CHECKBOX, OnCheckContinuousEG)
 
         def OnCheckContinuousPlugins(event):
             if event.IsChecked():
-                eg.checkUpdate.StartContinuousPlugins()
+                eg.checkUpdate.StartContinuous("Plugins")
             else:
-                eg.checkUpdate.StopContinuousPlugins()
+                eg.checkUpdate.StopContinuous("Plugins")
         checkUpdatePluginContinuousCtrl1.Bind(
             wx.EVT_CHECKBOX, OnCheckContinuousPlugins
         )
@@ -209,13 +209,13 @@ class OptionsDialog(eg.TaskletDialog):
         def OnIntervalChangeEG(event):
             if checkUpdateEGContinuousCtrl1.IsChecked():
                 eg.config.checkUpdateEGInterval = long(event.GetString())
-                wx.CallAfter(eg.checkUpdate.StartContinuousMainProg)
+                wx.CallAfter(eg.checkUpdate.StartContinuous, "EG")
         checkUpdateEGIntervalCtrl.Bind(wx.EVT_TEXT, OnIntervalChangeEG)
 
         def OnIntervalChangePlugins(event):
             if checkUpdatePluginContinuousCtrl1.IsChecked():
                 eg.config.checkUpdatePluginInterval = long(event.GetString())
-                wx.CallAfter(eg.checkUpdate.StartContinuousPlugins)
+                wx.CallAfter(eg.checkUpdate.StartContinuous, "Plugins")
         checkUpdatePluginIntervalCtrl.Bind(wx.EVT_TEXT, OnIntervalChangePlugins)
 
         # standard buttons
