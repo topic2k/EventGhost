@@ -130,7 +130,7 @@ class PluginModuleInfo(object):
         if not guid:
             eg.PrintDebugNotice("missing guid in plugin: %s" % self.path)
             self.guid = self.pluginName
-        self.hardwareId = hardwareId.upper()
+        self.hardwareId = hardwareId.upper() if hardwareId else ""
         # get the icon if any
         if icon:
             self.icon = eg.Icons.StringIcon(icon)

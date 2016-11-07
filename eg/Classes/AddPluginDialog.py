@@ -376,6 +376,8 @@ class AddPluginDialog(eg.TaskletDialog):
             eg.pluginManager.GetInstalledInfoList(), self.treeCtrl,
             Config.lastSelection, Config.collapsed
         )
+        if not eg.pluginManager.fetched_in_session:
+            eg.pluginManager.repository.DoFetching()
         self.typeIdsRepo = self.InitTreeCtrl(
             eg.pluginManager.GetAvailableInfoList(), self.treeCtrlRepo,
             Config.lastSelectionRepo, Config.collapsedRepo

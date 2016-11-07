@@ -131,7 +131,7 @@ class Text(eg.TranslatableStrings):
         )
 
 
-REPOSITORY_URL = "http://diskstation/~topic/egplugins/plugins.php"
+REPOSITORY_URL = "http://eg-plugins.torsti.net/plugins.php"
 
 
 def remove_plugin_dir(path, parent=None):
@@ -438,6 +438,7 @@ class PluginManager:
     def __init__(self):
         self.plugins = PluginCache()
         self.repository = Repository(self.plugins)
+        self.fetched_in_session = False
 
     def GetAvailableInfoList(self):
         return self.plugins.GetAvailableInfoList()
@@ -460,6 +461,15 @@ class PluginManager:
             return
         if manually:
             eg.MessageBox(Text.NoNewUpdatedPlugins)
+
+    def FetchIfNeeded(self):
+        try:
+            lastDate = self.repository.GetLastStartDay()
+            diff = (wx.DateTime_Today() - lastDate).days
+        except (ValueError, AssertionError):
+            diff = 1
+        if diff >= 1:
+            self.repository.DoFetching()
 
     def NewPluginsAvailable(self, new_plugins):
         # TODO: option to install/upgrade directly
@@ -675,6 +685,7 @@ class Repository(object):
             return
         self.ParseDownloadedXml()
         self.plugins.RebuildPluginCache()
+        eg.pluginManager.fetched_in_session = True
 
     @eg.LogItNoArgs
     def ParseDownloadedXml(self):
@@ -704,13 +715,13 @@ class Repository(object):
         self.plugins.repo_cache = dict()
 
         for plgn in available_plugins:
-            plugin_info = eg.PluginModuleInfo(plgn.get("download_url"))
+            plugin_info = eg.PluginModuleInfo("repo:{0}".format(plgn.get("guid")))
             try:
                 plugin_info.RegisterPlugin(
                     author=plgn.get("author", u""),
                     description=plgn.get("description", u""),
                     guid=plgn.get("guid", ""),
-                    hardwareId=plgn.get("hardwareId", ""),
+                    hardwareId=plgn.get("hardware_id", ""),
                     icon=plgn.get("icon", None),
                     kind=plgn.get("kind", "other"),
                     name=plgn.get("name", u""),
