@@ -145,7 +145,7 @@ install:
         git tag -d $Env:APPVEYOR_REPO_TAG_NAME
         $ref = ":refs/tags/" + $Env:APPVEYOR_REPO_TAG_NAME
         # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-        Start-Process git -Arg "push origin $ref" -Wait
+        git push origin '"$ref"'
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         python "_build\Build.py" --build --package --release --version $release
       } Else {
