@@ -143,12 +143,12 @@ install:
         # example:
         # git push origin :refs/tags/Deploy_0.5.0-beta8
         # git push origin Deploy_0.5.0-beta8
-
+        git checkout master
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
-        python "_build\Build.py" --build --package --release --version $release
+        python "_build\Build.py" --build --package --release --version $release | Out-Default
       } Else {
         # WIP
-        python "_build\Build.py" --build --package
+        python "_build\Build.py" --build --package | Out-Default
       }
       $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
       " "
