@@ -134,10 +134,9 @@ install:
       " "
       "=============== start the EventGhost build ==============="
       " "
-      If (
-        $Env:APPVEYOR_REPO_TAG.tolower() -eq "true"
-        -and $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy")
-      ){
+      If ($Env:APPVEYOR_REPO_TAG.tolower() -eq "true" -and
+        $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
+      {
         # to do a release, create a tag in the form "Deploy_VERSION"
         # VERSION must be a valid version string (without leading 'v')
         # this tag will be deleted and a new release "vVERSION" created.
