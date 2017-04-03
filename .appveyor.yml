@@ -134,18 +134,17 @@ install:
       " "
       "=============== start the EventGhost build ==============="
       " "
-      If ($Env:APPVEYOR_REPO_TAG -eq "true")
-      {
-        # to do a release, create a tag in the form "Release_VERSION"
-        # this tag will be deleted and a new one created.
+      If (
+        $Env:APPVEYOR_REPO_TAG.tolower() -eq "true"
+        -and $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy")
+      ){
+        # to do a release, create a tag in the form "Deploy_VERSION"
+        # VERSION must be a valid version string (without leading 'v')
+        # this tag will be deleted and a new release "vVERSION" created.
         # example:
-        # git push origin :refs/tags/Release_0.5.0-beta8
-        # git push origin Release_0.5.0-beta8
+        # git push origin :refs/tags/Deploy_0.5.0-beta8
+        # git push origin Deploy_0.5.0-beta8
 
-        git tag -d $Env:APPVEYOR_REPO_TAG_NAME
-        $ref = ":refs/tags/" + $Env:APPVEYOR_REPO_TAG_NAME
-        # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-        git push origin "$ref"
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         python "_build\Build.py" --build --package --release --version $release
       } Else {

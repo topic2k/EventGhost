@@ -20,6 +20,7 @@ import base64
 import sys
 import wx
 from agithub.GitHub import GitHub
+from os import environ
 from os.path import join
 
 # Local imports
@@ -83,6 +84,12 @@ class ReleaseToGitHub(builder.Task):
 
         gh = GitHub(token=token)
 
+        # delete a temporary tag that were used to deploy a release
+        if IsCIBuild():
+            # when we are on CI, we only get here,
+            #  when a deploy tag was created
+            self.DeleteDeployTag(gh)
+
         print "getting release info"
         releaseExists = False
         releaseId = None
@@ -117,6 +124,8 @@ class ReleaseToGitHub(builder.Task):
                         releaseId = rel["id"]
                         uploadUrl = str(rel['upload_url'][:-13])
                         releaseExists = True
+                        page = 0
+                        break
 
         print "getting branch info"
         rc, data = gh.repos[user][repo].branches[branch].get()
@@ -146,18 +155,6 @@ class ReleaseToGitHub(builder.Task):
             else:
                 relChglog = f.read().strip()
                 f.close()
-
-            # relChglog = ''
-            # chgLines = changelog.splitlines(True)
-            # try:
-            #     for i in range(1, len(chgLines)):
-            #         if chgLines[i].startswith("## "):
-            #             break
-            #         else:
-            #             relChglog += chgLines[i]
-            # except IndexError:
-            #     pass
-            # relChglog = relChglog.strip()
 
             print "creating release"
             body = dict(
@@ -276,3 +273,44 @@ class ReleaseToGitHub(builder.Task):
             )
 
         return newCommitSha
+
+    def DeleteDeployTag(self, gh):
+        """
+        Delete a temporary tag (github release) that was used to deploy
+        a new release.
+        """
+        user = self.buildSetup.gitConfig["user"]
+        repo = self.buildSetup.gitConfig["repo"]
+
+        deploy_tag_name = environ.get('APPVEYOR_REPO_TAG_NAME')
+        if not deploy_tag_name:
+            return
+        deploy_tag = None
+        page = 1
+        while page > 0:
+            rc, data = gh.repos[user][repo].git.refs.tags.get(
+                per_page=100,
+                page=page
+            )
+            page = NextPage(gh)
+            if rc == 200:
+                for tag in data:
+                    if tag['ref'].rsplit('/', 1)[1] == deploy_tag_name:
+                        deploy_tag = tag
+                        page = 0
+                        break
+
+        if deploy_tag and deploy_tag['object']['type'] == 'commit':
+            rc, data = gh.repos[user][repo].releases.tags[deploy_tag_name].get(
+                per_page=100,
+                page=page
+            )
+            if rc == 200:
+                rc, data2 = gh.repos[user][repo].releases[data['id']].delete()
+                # if rc == 204:
+                #     print "deploy github release deleted"
+
+        if deploy_tag:
+            rc, data = gh.repos[user][repo].git.refs[deploy_tag_name].delete()
+            # if rc == 204:
+            #     print "deploy tag deleted"
