@@ -89,6 +89,7 @@ class ReleaseToGitHub(builder.Task):
             # when we are on CI, we only get here,
             #  when a deploy tag was created
             self.DeleteDeployTag(gh)
+            branch = 'master'
 
         print "getting release info"
         releaseExists = False
