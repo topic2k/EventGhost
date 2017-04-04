@@ -253,7 +253,7 @@ class ReleaseToGitHub(builder.Task):
 
         print "creating commit for changelog update"
         body = {
-            'message': "Add changelog for {0}".format(appVer),
+            'message': "Add changelog for {0}\n[skip appveyor]".format(appVer),
             'tree': newTreeSha,
             'parents': [commitSha]
         }
@@ -286,6 +286,7 @@ class ReleaseToGitHub(builder.Task):
         deploy_tag_name = environ.get('APPVEYOR_REPO_TAG_NAME')
         if not deploy_tag_name:
             return
+
         deploy_tag = None
         page = 1
         while page > 0:
@@ -300,10 +301,6 @@ class ReleaseToGitHub(builder.Task):
                         deploy_tag = tag
                         page = 0
                         break
-                else:
-                    print "no deploy tag found:", deploy_tag_name
-            else:
-                print rc, data
 
         if deploy_tag and deploy_tag['object']['type'] == 'commit':
             rc, data = gh.repos[user][repo].releases.tags[deploy_tag_name].get(
@@ -314,12 +311,8 @@ class ReleaseToGitHub(builder.Task):
                 rc, data2 = gh.repos[user][repo].releases[data['id']].delete()
                 if rc == 204:
                     print "deploy github release deleted"
-            else:
-                print rc, data
 
         if deploy_tag:
             rc, data = gh.repos[user][repo].git.refs.tags[deploy_tag_name].delete()
             if rc == 204:
                 print "deploy tag deleted"
-            else:
-                print rc, data
