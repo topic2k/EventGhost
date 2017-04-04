@@ -300,6 +300,10 @@ class ReleaseToGitHub(builder.Task):
                         deploy_tag = tag
                         page = 0
                         break
+                else:
+                    print "no deploy tag found:", deploy_tag_name
+            else:
+                print rc, data
 
         if deploy_tag and deploy_tag['object']['type'] == 'commit':
             rc, data = gh.repos[user][repo].releases.tags[deploy_tag_name].get(
@@ -308,10 +312,14 @@ class ReleaseToGitHub(builder.Task):
             )
             if rc == 200:
                 rc, data2 = gh.repos[user][repo].releases[data['id']].delete()
-                # if rc == 204:
-                #     print "deploy github release deleted"
+                if rc == 204:
+                    print "deploy github release deleted"
+            else:
+                print rc, data
 
         if deploy_tag:
             rc, data = gh.repos[user][repo].git.refs[deploy_tag_name].delete()
-            # if rc == 204:
-            #     print "deploy tag deleted"
+            if rc == 204:
+                print "deploy tag deleted"
+            else:
+                print rc, data
