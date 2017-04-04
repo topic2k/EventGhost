@@ -72,7 +72,7 @@ class ReleaseToGitHub(builder.Task):
             changelog = f.read()
             f.close()
 
-        print "loading setup file"
+        print "loading installer file"
         try:
             f = open(setupPath, 'rb')
         except IOError:
@@ -318,7 +318,7 @@ class ReleaseToGitHub(builder.Task):
                 print rc, data
 
         if deploy_tag:
-            rc, data = gh.repos[user][repo].git.refs[deploy_tag_name].delete()
+            rc, data = gh.repos[user][repo].git.refs.tags[deploy_tag_name].delete()
             if rc == 204:
                 print "deploy tag deleted"
             else:
