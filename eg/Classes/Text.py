@@ -162,7 +162,8 @@ class Default:
             WebWiki = "&Wiki"
             PythonShell = "P&ython Shell"
             WIT = "Widget Inspection Tool"
-            CheckUpdate = "Check for &Updates..."
+            CheckUpdate = "Check for EventGhost &Updates..."
+            CheckUpdatePlugins = "Check for Plugi&n Updates..."
             About = "&About EventGhost..."
 
             Apply = "&Apply Changes"

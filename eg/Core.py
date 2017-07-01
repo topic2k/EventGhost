@@ -93,6 +93,8 @@ eg.actionGroup = eg.Bunch()
 eg.actionGroup.items = []
 eg.folderPath = eg.FolderPath()
 eg.GUID = eg.GUID()
+eg.checkUpdate = None
+
 
 def _CommandEvent():
     """Generate new (CmdEvent, Binder) tuple

@@ -121,13 +121,6 @@ def InitGui():
         startupFile
     )
 
-    if config.checkUpdate:
-        # avoid more than one check per day
-        today = gmtime()[:3]
-        if config.lastUpdateCheckDate != today:
-            config.lastUpdateCheckDate = today
-            wx.CallAfter(eg.CheckUpdate.Start)
-
     # Register restart handler for easy crash recovery.
     if eg.WindowsVersion >= 'Vista':
         args = " ".join(eg.app.GetArguments())
