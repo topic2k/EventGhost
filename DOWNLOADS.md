@@ -42,10 +42,10 @@ Nummer 6
 # WIP builds of pull requests
 
 [BEGIN]: <> (WIP_pr)
+* [EventGhost WIP-2018.04.15-22.56.43](https://ci.appveyor.com/api/buildjobs/82b17w2p555ktna0) [#86](https://github.com/topic2k/EventGhost/pull/86) add GitHub pages with download links
 * [EventGhost ](https://ci.appveyor.com/api/buildjobs/r1ggvh1fta52n9ru) [#86](https://github.com/topic2k/EventGhost/pull/86) add GitHub pages with download links
 *   [EventGhost ](https://ci.appveyor.com/api/buildjobs/4titvy2neron5rsf/artifacts/_build/output/EventGhost__Setup.exe) [#86](https://github.com/topic2k/EventGhost/pull/86) add GitHub pages with download links
 *   [EventGhost ](https://ci.appveyor.com/api/buildjobs/q65kcphs2src911p/artifacts/_build/output/EventGhost__Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
-*   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 *   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 
 [END]: <> (WIP_pr)
