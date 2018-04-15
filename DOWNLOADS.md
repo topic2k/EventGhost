@@ -43,10 +43,10 @@ Nummer 6
 
 [BEGIN]: <> (WIP_pr)
 *   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
+*   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 * [EventGhost WIP-2018.04.15-19.10.31](https://ci.appveyor.com/api/buildjobs/plra5i8hmpee32os/artifacts/_build/output/EventGhost_WIP-2018.04.15-19.10.31_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 * [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
 * [WIP-2018.04.10-17.31.18](https://ci.appveyor.com/api/buildjobs/exo7n7fbtib6fxo5/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.31.18_Setup.exe) [#307](https://github.com/topic2k/EventGhost/pull/307) NamedPipe.py: move exception declaration to the top of file
-* [791-master](https://ci.appveyor.com/api/buildjobs/qavo6fq423et77a5/artifacts/_build/output/EventGhost_WIP-2018.03.08-17.08.31_Setup.exe) [#306](https://github.com/topic2k/EventGhost/pull/306) Update .appveyor.yml
 
 [END]: <> (WIP_pr)
 
