@@ -42,11 +42,11 @@ Nummer 6
 # WIP builds of pull requests
 
 [BEGIN]: <> (WIP_pr)
+*   [EventGhost ](https://ci.appveyor.com/api/buildjobs/4titvy2neron5rsf/artifacts/_build/output/EventGhost__Setup.exe) [#86](https://github.com/topic2k/EventGhost/pull/86) add GitHub pages with download links
 *   [EventGhost ](https://ci.appveyor.com/api/buildjobs/q65kcphs2src911p/artifacts/_build/output/EventGhost__Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 *   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 *   [EventGhost WIP-2018.04.15-20.13.41](https://ci.appveyor.com/api/buildjobs/b57motqnsg82xolo/artifacts/_build/output/EventGhost_WIP-2018.04.15-20.13.41_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
 * [EventGhost WIP-2018.04.15-19.10.31](https://ci.appveyor.com/api/buildjobs/plra5i8hmpee32os/artifacts/_build/output/EventGhost_WIP-2018.04.15-19.10.31_Setup.exe) [#85](https://github.com/topic2k/EventGhost/pull/85) Downloads
-* [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
 
 [END]: <> (WIP_pr)
 
