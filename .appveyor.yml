@@ -156,18 +156,24 @@ install:
       If ($Env:APPVEYOR_REPO_TAG.ToUpper() -eq "TRUE" -and
         $Env:APPVEYOR_REPO_TAG_NAME.ToUpper().startswith("DEPLOY"))
       {
+        "    deploying..."
         git checkout -q master
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
         python "_build\Build.py" --build --package --release --version $release $url
       } Else {
+        "    WIP building..."
         # WIP
         if ($verbose) {
+          "      with verbose output"
           python "_build\Build.py" --build --package --verbose
         } else {
+          "      without verbose output"
           python "_build\Build.py" --build --package
         }
-        if (Test-Path ".\EventGhost.exe") { .\EventGhost.exe -install }
+        if (Test-Path ".\EventGhost.exe") {
+         "    test install"
+         .\EventGhost.exe -install }
       }
       $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
       " "
