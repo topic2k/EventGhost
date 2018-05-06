@@ -67,6 +67,9 @@ install:
           $verbose = $verbose -or $ENV:APPVEYOR_PULL_REQUEST_TITLE.ToUpper().Contains("[VERBOSE]")
       }
 
+      # just for testing. REMOVE
+      $verbose = $true
+
       Remove-Item $PythonWindowsDLL
       New-Item $InstallersFolder -type directory | Out-Null
       " "
@@ -86,7 +89,7 @@ install:
         " "
         "--- wxPython 3.0.2.0"
         $WXInstaller = $InstallersFolder + "wxPython3.0-win32-3.0.2.0-py27.exe"
-        $WXURL = "http://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
+        $WXURL = "https://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
         Start-FileDownload $WXURL -Timeout 60000 -FileName $WXInstaller
         "    Installing..."
         Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
