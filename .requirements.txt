@@ -4,7 +4,7 @@
 # GIT >= 2.8.0             # https://git-scm.com/download/win
 # wxPython==3.0.2.0        # http://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe
 
-pip==9.0.3
+pip==10.0.1
 setuptools==39.1.0
 
 pywin32==223
