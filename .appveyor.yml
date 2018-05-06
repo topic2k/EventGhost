@@ -166,6 +166,9 @@ install:
         # WIP
         if ($verbose) {
           "      with verbose output"
+          PowerShell_ISE.exe
+          $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
           python "_build\Build.py" --build --package --verbose
         } else {
           "      without verbose output"
