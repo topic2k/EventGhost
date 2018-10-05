@@ -194,8 +194,8 @@ artifacts:
 on_success:
   - ps: |
       # start-process powershell_ise.exe
-      PowerShell_ISE.exe
-      $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      # PowerShell_ISE.exe
+      # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
       $SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
       if (-not ($SetupExe)){
