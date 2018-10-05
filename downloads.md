@@ -33,12 +33,11 @@
 # WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
+* [EventGhost WIP-2018.10.05-16.32.35](https://ci.appveyor.com/api/buildjobs/93mi5y0bqhd0nork/artifacts/_build/output/EventGhost_WIP-2018.10.05-16.32.35_Setup.exe) [commit dd336a558c39c89e5ef3cc0256add8948684d67b](https://github.com/topic2k/EventGhost/commit/dd336a558c39c89e5ef3cc0256add8948684d67b) small changes
 *   Nummer 1
 *   Nummer 2
 *   Nummer 3
 *   Nummer 4
-*   Nummer 5
-*   Nummer 6
 
 [//]: # (END wip_master)
 
