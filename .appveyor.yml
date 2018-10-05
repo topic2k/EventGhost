@@ -1,6 +1,12 @@
 # In AppVeyor's web config add an enviremont variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
-# To draft a release on GitHub with AppVeyor, create a tag on master.
+#
+# To draft a release on GitHub with AppVeyor, create a tag in the form "deploy_VERSION"
+# VERSION must be a valid version string (without leading 'v')
+# this tag will be deleted and a new release "vVERSION" created.
+# Example:
+#   manually created tag is: deploy_42.05.04-beta47
+#   automatically created releaase is: v42.05.04-beta47
 
 
 version: '{build}-{branch}'
@@ -127,9 +133,7 @@ install:
       If ($Env:APPVEYOR_REPO_TAG.tolower() -eq "true" -and
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
-        # to do a release, create a tag in the form "Deploy_VERSION"
-        # VERSION must be a valid version string (without leading 'v')
-        # this tag will be deleted and a new release "vVERSION" created.
+        # do a release
         git checkout -q master
         $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
