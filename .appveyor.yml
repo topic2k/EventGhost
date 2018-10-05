@@ -301,7 +301,7 @@ on_success:
       $msg = "Update downloads.md (" + $version + ")"
       git add --ignore-errors downloads.md
       git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit -q -m $msg
-      git push
+      git push -q
 
 
 notifications:
