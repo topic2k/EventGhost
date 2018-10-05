@@ -37,6 +37,8 @@ install:
   # Microsoft Visual C++ Redistributable 2008 (version min: 9.0.21022.8)
   # - cinst vcredist2008
 
+  # - cinst pycharm
+
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
       $Env:PATH = $Env:PATH -replace "Python27", "Stackless27"
@@ -63,10 +65,11 @@ install:
           "    Done."
         }
         " "
-        "--- Stackless 2.7.12150 x86"
-        $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
+        "--- Stackless 2.7.15150 x86"
+        $fname = "python-2.7.15150-stackless.msi"
+        $StacklessInstaller = $InstallersFolder + $fname
         $StacklessInstallDir = "TARGETDIR=" + $PythonFolder
-        $StacklessURL = "http://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
+        $StacklessURL = "http://www.stackless.com/binaries/" + $fname
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
         "    Installing..."
         Start-Process MsiExec.exe -Arg "/I $StacklessInstaller /quiet /passive /qn /norestart $StacklessInstallDir" -Wait
@@ -133,6 +136,8 @@ install:
         python "_build\Build.py" --build --package --release --version $release $url
       } Else {
         # WIP
+        # start-process powershell_ise.exe
+        # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
         python "_build\Build.py" --build --package
         .\EventGhost.exe -install
       }
@@ -179,6 +184,125 @@ artifacts:
     name: CHANGELOG_THIS_RELEASE.md
   - path: _build\output\CHANGELOG_THIS_RELEASE.bb
     name: CHANGELOG_THIS_RELEASE.bb
+
+
+# on successful build
+on_success:
+  - ps: |
+      # start-process powershell_ise.exe
+      $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+      $SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
+      if (-not ($SetupExe)){
+        exit
+      }
+      $start = $SetupExe.IndexOf("_")
+      $length = $SetupExe.LastIndexOf("_") - $start
+      $version = $SetupExe.Substring($start + 1, $length - 1)
+
+      Function edit-downloads {
+          Param ($blockId, $in, $new)
+          # PARAMETERS:
+          #   $blockId: [previous|prerelease|wip_master|wip_pr]
+          #   $in     : contents to be edited
+          #   $new    : line to be added
+
+          $cnt = 5  # Number of entries to keep per section
+          $out = @()
+          $copy = $true
+
+          $in | foreach {
+              if ($copy) {
+                  if ($_ -eq "[//]: # (BEGIN $blockId)") {
+                      # Tell the script that we now enter the section to edit
+                      $copy = $false
+                  }
+                  $out += $_
+              } else {
+                  if ($_ -eq "[//]: # (END $blockId)") {
+                      # Make sure the line before the END-marker is empty or we have unwanted output
+                      if ($out[-1] -ne "") { $out += "" }
+
+                      # Write the END-marker
+                      $out += $_
+
+                      # tell the script to continue with copying the following file contents
+                      $copy = $true
+                  }
+                  elseif ($cnt -gt 1) {
+                      if ($new) {
+                          # insert the new text
+                          $out += $new
+                          # and set $new to false because we want the new text only once
+                          $new = $false
+                      }
+                      # copy older entries/lines as we are below the wanted numbers of entries in this section
+                      $out += $_
+                      $cnt--
+                  }
+              }
+          }
+          # return the edited text
+          return $out
+      }
+
+      git checkout --quiet gh-pages
+
+      $url = git remote --quiet get-url origin
+      $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
+      git remote --quiet set-url origin $urlnew
+
+
+      $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
+      $artifact_url += "/artifacts/_build/output/EventGhost_" + $version + "_Setup.exe"
+      $new_text = "* [EventGhost " + $version + "](" + $artifact_url + ")"
+
+      if ($Env:APPVEYOR_PULL_REQUEST_NUMBER) {
+
+        # Update downloads section for pull requests
+
+        $new_text += " [#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "](https://github.com/topic2k/EventGhost/pull/"
+        $new_text += $env:APPVEYOR_PULL_REQUEST_NUMBER + ") " + $env:APPVEYOR_PULL_REQUEST_TITLE
+        $new_dl_txt = edit-downloads 'wip_pr' $dl_txt $new_text
+
+      } elseif ($Env:APPVEYOR_REPO_TAG eq "true" ) {
+
+        # Update download section for tags (prereleases and releases)
+
+        $new_text += " [GitHub release page](https://github.com/topic2k/EventGhost/releases/tag/v"
+        $new_text += $version + ")"
+
+        if ( $version.Contains("-") ) {
+
+          # We assume this is a prereleas because it contains '-' in its version string
+          $new_dl_txt = edit-downloads 'prerelease' $dl_txt $new_text
+
+        } else {
+
+          # special handling for release:
+          #   move the actual release to previous and then replace the latest release
+          $idx_old_release = $dl_txt.IndexOf("[//]: # (BEGIN release)") + 1
+          $old_release = $dl_txt[$idx_old_release]
+          $dl_txt[$idx_old_release] = $new_text
+          $new_dl_txt = edit-downloads 'previous' $dl_txt $old_release
+
+        }
+      } elseif ($Env:APPVEYOR_REPO_BRANCH eq "master" ) {
+
+        # Update download section for commits to master aka WIP
+
+        $new_text += " [commit " + $env:APPVEYOR_REPO_COMMIT
+        $new_text += "](https://github.com/topic2k/EventGhost/commit/"
+        $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        $new_dl_txt = edit-downloads 'wip' $dl_txt $new_text
+
+      }
+
+      Set-Content -value $new_dl_txt -path 'downloads.md'
+      $msg = "Update downloads.md (" + $version + ")"
+      git add --quiet downloads.md
+      git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit --quiet -m $msg
+      git push --quiet
 
 
 notifications:
