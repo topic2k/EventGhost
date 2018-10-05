@@ -258,6 +258,7 @@ on_success:
       git remote set-url origin $urlnew
 
 
+      $dl_txt = Get-Content 'downloads.md'
       $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
       $artifact_url += "/artifacts/_build/output/EventGhost_" + $version + "_Setup.exe"
       $new_text = "* [EventGhost " + $version + "](" + $artifact_url + ")"
@@ -299,13 +300,13 @@ on_success:
         $new_text += " [commit " + $env:APPVEYOR_REPO_COMMIT
         $new_text += "](https://github.com/topic2k/EventGhost/commit/"
         $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        $new_dl_txt = edit-downloads 'wip' $dl_txt $new_text
+        $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text
 
       }
 
       Set-Content -value $new_dl_txt -path 'downloads.md'
       $msg = "Update downloads.md (" + $version + ")"
-      git add --quiet downloads.md
+      git add downloads.md
       git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit -m $msg
       git push
 
