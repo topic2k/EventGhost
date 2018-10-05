@@ -6,7 +6,7 @@
 # this tag will be deleted and a new release "vVERSION" created.
 # Example:
 #   manually created tag is: deploy_42.05.04-beta47
-#   automatically created releaase is: v42.05.04-beta47
+#   automatically created releaase will be: v42.05.04-beta47
 
 
 version: '{build}-{branch}'
@@ -253,9 +253,9 @@ on_success:
 
       git checkout --quiet gh-pages
 
-      $url = git remote --quiet get-url origin
+      $url = git remote get-url origin
       $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
-      git remote --quiet set-url origin $urlnew
+      git remote set-url origin $urlnew
 
 
       $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
@@ -306,8 +306,8 @@ on_success:
       Set-Content -value $new_dl_txt -path 'downloads.md'
       $msg = "Update downloads.md (" + $version + ")"
       git add --quiet downloads.md
-      git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit --quiet -m $msg
-      git push --quiet
+      git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit -m $msg
+      git push
 
 
 notifications:
