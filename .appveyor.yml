@@ -290,9 +290,9 @@ on_success:
       } elseif ($Env:APPVEYOR_REPO_BRANCH -eq "master" ) {
 
         # Update download section for commits to master aka WIP
-        $new_text += " - [[commit " + $env:APPVEYOR_REPO_COMMIT
+        $new_text += " - [[commit " + $env:APPVEYOR_REPO_COMMIT.Substring(0, 8)
         $new_text += "]](https://github.com/topic2k/EventGhost/commit/"
-        $new_text += $env:APPVEYOR_REPO_COMMIT.Substring(0, 8) + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
         $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text
 
       }
