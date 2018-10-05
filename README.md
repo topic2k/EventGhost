@@ -1,4 +1,4 @@
-![EventGhost Logo](images/logo.png)  ![EventGhost](images/logo2.png)
+![EventGhost Logo](images/logo.png)  ![EventGhost](images/logo3.png)
 
 [![downloads](_build/data/docs/_static/downloads.svg)](downloads.md)   [![Build Status](https://ci.appveyor.com/api/projects/status/5scgdqrfis5h2tbs/branch/master?svg=true)](https://ci.appveyor.com/project/topic2k/eventghost/branch/master/artifacts)   [![Code Climate](https://codeclimate.com/github/EventGhost/EventGhost/badges/gpa.svg)](https://codeclimate.com/github/EventGhost/EventGhost)   [![Test Coverage](https://codeclimate.com/github/EventGhost/EventGhost/badges/coverage.svg)](https://codeclimate.com/github/EventGhost/EventGhost/coverage) |
 
