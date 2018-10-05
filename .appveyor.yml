@@ -264,27 +264,21 @@ on_success:
       $new_text = "* [EventGhost " + $version + "](" + $artifact_url + ")"
 
       if ($Env:APPVEYOR_PULL_REQUEST_NUMBER) {
-
         # Update downloads section for pull requests
-
-        $new_text += " [#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "](https://github.com/topic2k/EventGhost/pull/"
+        $new_text += " - [[#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "]](https://github.com/topic2k/EventGhost/pull/"
         $new_text += $env:APPVEYOR_PULL_REQUEST_NUMBER + ") " + $env:APPVEYOR_PULL_REQUEST_TITLE
         $new_dl_txt = edit-downloads 'wip_pr' $dl_txt $new_text
 
       } elseif ($Env:APPVEYOR_REPO_TAG -eq "true" ) {
-
         # Update download section for tags (prereleases and releases)
-
-        $new_text += " [GitHub release page](https://github.com/topic2k/EventGhost/releases/tag/v"
+        $new_text += " - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v"
         $new_text += $version + ")"
 
         if ( $version.Contains("-") ) {
-
           # We assume this is a prereleas because it contains '-' in its version string
           $new_dl_txt = edit-downloads 'prerelease' $dl_txt $new_text
 
         } else {
-
           # special handling for release:
           #   move the actual release to previous and then replace the latest release
           $idx_old_release = $dl_txt.IndexOf("[//]: # (BEGIN release)") + 1
@@ -296,9 +290,8 @@ on_success:
       } elseif ($Env:APPVEYOR_REPO_BRANCH -eq "master" ) {
 
         # Update download section for commits to master aka WIP
-
-        $new_text += " [commit " + $env:APPVEYOR_REPO_COMMIT
-        $new_text += "](https://github.com/topic2k/EventGhost/commit/"
+        $new_text += " - [[commit " + $env:APPVEYOR_REPO_COMMIT
+        $new_text += "]](https://github.com/topic2k/EventGhost/commit/"
         $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
         $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text
 
