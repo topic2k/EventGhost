@@ -33,11 +33,11 @@
 # WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
+* [EventGhost WIP-2018.10.05-17.39.49](https://ci.appveyor.com/api/buildjobs/trskjtrw1k2pb744/artifacts/_build/output/EventGhost_WIP-2018.10.05-17.39.49_Setup.exe) - [[commit 297f51d0636043b7d517b13d446e3aa1883397c5]](https://github.com/topic2k/EventGhost/commit/297f51d0) quick typo fix
 * [EventGhost WIP-2018.10.05-16.57.08](https://ci.appveyor.com/api/buildjobs/ukhq65152ronypco/artifacts/_build/output/EventGhost_WIP-2018.10.05-16.57.08_Setup.exe) - [[commit c5940111e3d78abe58998388f0df835f3178dfd8]](https://github.com/topic2k/EventGhost/commit/c5940111e3d78abe58998388f0df835f3178dfd8) more small changes
 * [EventGhost WIP-2018.10.05-16.32.35](https://ci.appveyor.com/api/buildjobs/93mi5y0bqhd0nork/artifacts/_build/output/EventGhost_WIP-2018.10.05-16.32.35_Setup.exe) [commit dd336a558c39c89e5ef3cc0256add8948684d67b](https://github.com/topic2k/EventGhost/commit/dd336a558c39c89e5ef3cc0256add8948684d67b) small changes
 *   Nummer 1
 *   Nummer 2
-*   Nummer 3
 
 [//]: # (END wip_master)
 
