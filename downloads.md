@@ -1,10 +1,9 @@
 [Latest release](#release) &nbsp;&nbsp;&nbsp; [Previous releases](#previous) &nbsp;&nbsp;&nbsp; [Pre-releases](#prerelease) &nbsp;&nbsp;&nbsp; [WIP](#wip_master) &nbsp;&nbsp;&nbsp; [Pull Requests](#wip_pr) &nbsp;&nbsp;&nbsp; [Other downloads](#other)
  
- 
----
+ ---
 
-
-### <a name="release"></a> Latest release:
+<a name="release"></a>
+### Latest release:
 
 [//]: # (BEGIN release)
 * [EventGhost 0.9.16](https://ci.appveyor.com/api/buildjobs/uc35khgxcuoic24b/artifacts/_build/output/EventGhost_0.9.16_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.9.16)
@@ -12,7 +11,8 @@
 [//]: # (END release)
 
 
-### <a name="previous"></a> Previous releases:
+<a name="previous"></a>
+### Previous releases:
 
 [//]: # (BEGIN previous)
 *   [EventGhost 0.4.1.r1722](EventGhost_0.4.1.r1722_Setup.exe) [[source]](EventGhost_0.4.1.r1722_Source.zip), Feb 03 2016
@@ -24,7 +24,8 @@
 [//]: # (END previous)
 
 
-### <a name="prerelease"></a> Latest pre-release:
+<a name="prerelease"></a>
+### Latest pre-release:
 
 [//]: # (BEGIN prerelease)
 * [EventGhost 0.5.11-rc43](https://ci.appveyor.com/api/buildjobs/nkx1g3g4d8da1wxj/artifacts/_build/output/EventGhost_0.5.11-rc43_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.5.11-rc43)
@@ -36,7 +37,8 @@
 [//]: # (END prerelease)
 
 
-### <a name="wip_master"></a> WIP builds of master branch
+<a name="wip_master"></a>
+### WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
 * [EventGhost WIP-2018.10.06-08.58.40](https://ci.appveyor.com/api/buildjobs/jqok5hck3cf23mk9/artifacts/_build/output/EventGhost_WIP-2018.10.06-08.58.40_Setup.exe) - [[commit 1eb17a87]](https://github.com/topic2k/EventGhost/EventGhost/commit/1eb17a873cc706d86f3b2f73353afb74c86b1f86) and again
@@ -48,7 +50,8 @@
 [//]: # (END wip_master)
 
 
-### <a name="wip_pr"></a> WIP builds of pull requests
+<a name="wip_pr"></a>
+### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
 * [EventGhost WIP-2018.10.06-06.56.57](https://ci.appveyor.com/api/buildjobs/d94obl7n14jvyd2n/artifacts/_build/output/EventGhost_WIP-2018.10.06-06.56.57_Setup.exe) - [[#87]](https://github.com/topic2k/EventGhost/pull/87) Create requirements.txt
@@ -60,7 +63,8 @@
 [//]: # (END wip_pr)
 
 
-### <a name="other"></a> Other downloads:
+<a name="other"></a>
+### Other downloads:
 
 *   [Driver for X10 remotes (32-bit)](http://eventghost.net/downloads/x10drivers_x86.exe)
 *   [Driver for X10 remotes (64-bit)](http://eventghost.net/downloads/x10drivers_x64.exe)
