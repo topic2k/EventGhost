@@ -1,3 +1,33 @@
+## [1.1.3](https://github.com/topic2k/EventGhost/releases/tag/v1.1.3) (2018-10-06)
+
+**Enhancements:**
+
+* Add an option to set the maximum allowed simultaneous threads … [\#24](https://github.com/topic2k/pygcgen/pull/24) ([topic2k](https://github.com/topic2k))
+
+**Fixed bugs:**
+
+* Skip non-merged closed issues? [\#18](https://github.com/topic2k/pygcgen/pull/18) ([alexanderad](https://github.com/alexanderad))
+
+**Other changes:**
+
+* changes for using pygcgen with python 2.7 [\#19](https://github.com/topic2k/pygcgen/pull/19) ([topic2k](https://github.com/topic2k))
+* Config file for pyup.io [\#20](https://github.com/topic2k/pygcgen/pull/20) ([pyup-bot](https://github.com/pyup-bot))
+* Initial Update [\#21](https://github.com/topic2k/pygcgen/pull/21) ([pyup-bot](https://github.com/pyup-bot))
+* Update setuptools to 36.6.0 [\#26](https://github.com/topic2k/EventGhost/pull/26) ([pyup-bot](https://github.com/pyup-bot))
+* \[VERBOSE\]  Update commonmark to 0.7.4 [\#46](https://github.com/topic2k/EventGhost/pull/46) ([pyup-bot](https://github.com/pyup-bot))
+* \[VERBOSE\] Update pillow to 4.3.0 [\#47](https://github.com/topic2k/EventGhost/pull/47) ([pyup-bot](https://github.com/pyup-bot))
+* \[VERBOSE\] Update sphinx to 1.6.4 [\#54](https://github.com/topic2k/EventGhost/pull/54) ([pyup-bot](https://github.com/pyup-bot))
+* \[VERBOSE\] Update paramiko to 2.3.1 [\#55](https://github.com/topic2k/EventGhost/pull/55) ([pyup-bot](https://github.com/pyup-bot))
+* \[VERBOSE\] Update sphinx to 1.6.5 [\#56](https://github.com/topic2k/EventGhost/pull/56) ([pyup-bot](https://github.com/pyup-bot))
+* Adds better handling of default parameters [\#59](https://github.com/topic2k/EventGhost/pull/59) ([kdschlosser](https://github.com/kdschlosser))
+* Scheduled monthly dependency update for April [\#22](https://github.com/topic2k/pygcgen/pull/22) ([pyup-bot](https://github.com/pyup-bot))
+* fix travis failure [\#25](https://github.com/topic2k/pygcgen/pull/25) ([topic2k](https://github.com/topic2k))
+* Admin update 2 [\#2](https://github.com/topic2k/PyUpdater/pull/2) ([topic2k](https://github.com/topic2k))
+* Scheduled monthly dependency update for June [\#26](https://github.com/topic2k/pygcgen/pull/26) ([pyup-bot](https://github.com/pyup-bot))
+* Create requirements.txt [\#87](https://github.com/topic2k/EventGhost/pull/87) ([topic2k](https://github.com/topic2k))
+* Update README.md [\#96](https://github.com/topic2k/EventGhost/pull/96) ([topic2k](https://github.com/topic2k))
+
+
 ## [1.0.0-alpha1](https://github.com/topic2k/EventGhost/releases/tag/v1.0.0-alpha1) (2018-10-06)
 
 Only minor changes in this release.
