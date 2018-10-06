@@ -1,3 +1,8 @@
+## [13.13.13-alpha13](https://github.com/topic2k/EventGhost/releases/tag/v13.13.13-alpha13) (2018-10-06)
+
+Only minor changes in this release.
+
+
 ## [11.99.22-rc7](https://github.com/topic2k/EventGhost/releases/tag/v11.99.22-rc7) (2018-10-06)
 
 Only minor changes in this release.
