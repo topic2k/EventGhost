@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2018.10.06-13.59.31](https://ci.appveyor.com/api/buildjobs/oiqye3w7qq1mo1br/artifacts/_build/output/EventGhost_WIP-2018.10.06-13.59.31_Setup.exe) - [[#97]](https://github.com/topic2k/EventGhost/pull/97) Scheduled daily dependency update on saturday
 * [EventGhost WIP-2018.10.06-06.56.57](https://ci.appveyor.com/api/buildjobs/d94obl7n14jvyd2n/artifacts/_build/output/EventGhost_WIP-2018.10.06-06.56.57_Setup.exe) - [[#87]](https://github.com/topic2k/EventGhost/pull/87) Create requirements.txt
 * [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
 * [WIP-2018.04.10-17.31.18](https://ci.appveyor.com/api/buildjobs/exo7n7fbtib6fxo5/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.31.18_Setup.exe) [#307](https://github.com/topic2k/EventGhost/pull/307) NamedPipe.py: move exception declaration to the top of file
