@@ -45,11 +45,11 @@
 # WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2018.10.06-06.56.57](https://ci.appveyor.com/api/buildjobs/d94obl7n14jvyd2n/artifacts/_build/output/EventGhost_WIP-2018.10.06-06.56.57_Setup.exe) - [[#87]](https://github.com/topic2k/EventGhost/pull/87) Create requirements.txt
 * [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
 * [WIP-2018.04.10-17.31.18](https://ci.appveyor.com/api/buildjobs/exo7n7fbtib6fxo5/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.31.18_Setup.exe) [#307](https://github.com/topic2k/EventGhost/pull/307) NamedPipe.py: move exception declaration to the top of file
 * [791-master](https://ci.appveyor.com/api/buildjobs/qavo6fq423et77a5/artifacts/_build/output/EventGhost_WIP-2018.03.08-17.08.31_Setup.exe) [#306](https://github.com/topic2k/EventGhost/pull/306) Update .appveyor.yml
 * [790-master](https://ci.appveyor.com/api/buildjobs/521po9302drtsef2/artifacts/_build/output/EventGhost_WIP-2018.03.06-12.42.04_Setup.exe) [#305](https://github.com/topic2k/EventGhost/pull/305) Update Stackless Python 2.7.12 to 2.7.14
-* [788-master](https://ci.appveyor.com/api/buildjobs/964ojm62doasleg6/artifacts/_build/output/EventGhost_WIP-2018.03.05-17.07.59_Setup.exe) [#304](https://github.com/topic2k/EventGhost/pull/304) optimizes images
 
 [//]: # (END wip_pr)
 
