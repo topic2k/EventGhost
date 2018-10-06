@@ -1,7 +1,7 @@
 [Latest release](#release) &nbsp;&nbsp;&nbsp;
 [Previous releases](#previous) &nbsp;&nbsp;&nbsp;
 [Pre-releases](#prerelease) &nbsp;&nbsp;&nbsp;
-[WIP](#wip_master) &nbsp;&nbsp;&nbsp;
+[WIP](#wip-builds-of-master-branch) &nbsp;&nbsp;&nbsp;
 [Pull Requests](#wip_pr) &nbsp;&nbsp;&nbsp;
 [Other downloads](#other)
 
