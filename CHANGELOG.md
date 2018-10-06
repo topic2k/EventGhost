@@ -1,3 +1,8 @@
+## [11.99.22-rc7](https://github.com/topic2k/EventGhost/releases/tag/v11.99.22-rc7) (2018-10-06)
+
+Only minor changes in this release.
+
+
 ## [0.11.7-rc3](https://github.com/topic2k/EventGhost/releases/tag/v0.11.7-rc3) (2018-10-06)
 
 Only minor changes in this release.
