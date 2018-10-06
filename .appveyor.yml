@@ -258,9 +258,9 @@ on_success:
       } elseif ($Env:APPVEYOR_REPO_TAG -eq "true" ) {        
         # Update download section for tags (prereleases and releases)
         $rel_url = "https://github.com/" + $Env:APPVEYOR_REPO_NAME + "/releases/"
-        $new_text = "* [EventGhost " + $Env:build_version + "](" + $rel_url + "download/"
+        $new_text = "* [EventGhost " + $Env:build_version + "](" + $rel_url + "download/v"
         $new_text += $Env:build_version + "/" + $Env:SetupExe + ")"
-        $new_text += " - [[GitHub release page]](" + $rel_url + "tag/" + $Env:build_version + ")"
+        $new_text += " - [[GitHub release page]](" + $rel_url + "tag/v" + $Env:build_version + ")"
 
         if ( $Env:build_version.Contains("-") ) {
           # We assume this is a prereleas because it contains '-' in its version string
