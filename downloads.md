@@ -41,11 +41,11 @@
 ### WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
+* [EventGhost WIP-2018.10.06-10.03.37](https://ci.appveyor.com/api/buildjobs/y8axnen8jcdmvi3k/artifacts/_build/output/EventGhost_WIP-2018.10.06-10.03.37_Setup.exe) - [[commit 2c5779be]](https://github.com/topic2k/EventGhost/EventGhost/commit/2c5779be46a4394c9f98127d49901125646d610e) Update requirements.txt
 * [EventGhost WIP-2018.10.06-08.58.40](https://ci.appveyor.com/api/buildjobs/jqok5hck3cf23mk9/artifacts/_build/output/EventGhost_WIP-2018.10.06-08.58.40_Setup.exe) - [[commit 1eb17a87]](https://github.com/topic2k/EventGhost/EventGhost/commit/1eb17a873cc706d86f3b2f73353afb74c86b1f86) and again
 * [EventGhost WIP-2018.10.06-08.52.01](https://ci.appveyor.com/api/buildjobs/4b2ycu67aplsinke/artifacts/_build/output/EventGhost_WIP-2018.10.06-08.52.01_Setup.exe) - [[commit 94ca4abd]](https://github.com/topic2k/EventGhost/commit/94ca4abdaef01c7d22762b284feb89da080855e0) Update .appveyor.yml
 * [EventGhost WIP-2018.10.06-08.00.06](https://ci.appveyor.com/api/buildjobs/l44elgfet2cyfsyp/artifacts/_build/output/EventGhost_WIP-2018.10.06-08.00.06_Setup.exe) - [[commit 63a15479]](https://github.com/topic2k/EventGhost/commit/63a154798b5c701c5d381f835d5142b82a227087) Update .appveyor.yml
 * [EventGhost WIP-2018.10.06-07.05.37](https://ci.appveyor.com/api/buildjobs/4eunyoeb4klq74px/artifacts/_build/output/EventGhost_WIP-2018.10.06-07.05.37_Setup.exe) - [[commit f5429b71]](https://github.com/topic2k/EventGhost/commit/f5429b71f34d409db6bbedbd49a1d8bad2fe4475) Create requirements.txt (#87)
-* [EventGhost WIP-2018.10.05-17.54.11](https://ci.appveyor.com/api/buildjobs/m43wbsa6hb4yov7i/artifacts/_build/output/EventGhost_WIP-2018.10.05-17.54.11_Setup.exe) - [[commit 55809447]](https://github.com/topic2k/EventGhost/commit/558094479af28473bf4644c57cd3ba55ce764d9f) shorten commit sha
 
 [//]: # (END wip_master)
 
