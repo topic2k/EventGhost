@@ -33,11 +33,11 @@
 ### Latest pre-release:
 
 [//]: # (BEGIN prerelease)
+* [EventGhost 0.0.1-alpha1](https://github.com/topic2k/EventGhost/releases/download/v0.0.1-alpha1/EventGhost_0.0.1-alpha1_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.0.1-alpha1)
 * [EventGhost 1.0.0-alpha1](https://github.com/topic2k/EventGhost/releases/download/v1.0.0-alpha1/EventGhost_1.0.0-alpha1_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v1.0.0-alpha1)
 * [EventGhost 13.13.13-alpha13](https://github.com/topic2k/EventGhost/releases/download/v13.13.13-alpha13/EventGhost_13.13.13-alpha13_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v13.13.13-alpha13)
 * [EventGhost 11.99.22-rc7](https://github.com/topic2k/EventGhost/releases/download/11.99.22-rc7/EventGhost_11.99.22-rc7_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/11.99.22-rc7)
 * [EventGhost 0.11.7-rc3](https://github.com//releases/download/0.11.7-rc3/EventGhost_0.11.7-rc3_Setup.exe) - [[GitHub release page]](https://github.com//releases/tag/0.11.7-rc3)
-* [EventGhost 0.5.11-rc43](https://ci.appveyor.com/api/buildjobs/nkx1g3g4d8da1wxj/artifacts/_build/output/EventGhost_0.5.11-rc43_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.5.11-rc43)
 
 [//]: # (END prerelease)
 
