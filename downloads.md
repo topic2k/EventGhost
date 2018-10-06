@@ -1,13 +1,12 @@
-[Latest release](#release) &nbsp;&nbsp;&nbsp;
-[Previous releases](#previous) &nbsp;&nbsp;&nbsp;
-[Pre-releases](#prerelease) &nbsp;&nbsp;&nbsp;
+[Latest release](#latest-release) &nbsp;&nbsp;&nbsp;
+[Previous releases](#previous-releases) &nbsp;&nbsp;&nbsp;
+[Pre-releases](#latest-pre-release) &nbsp;&nbsp;&nbsp;
 [WIP](#wip-builds-of-master-branch) &nbsp;&nbsp;&nbsp;
-[Pull Requests](#wip_pr) &nbsp;&nbsp;&nbsp;
-[Other downloads](#other)
+[Pull Requests](#wip-builds-of-pull-requests) &nbsp;&nbsp;&nbsp;
+[Other downloads](#other-downloads)
 
 ---
 
-<a name="release"></a>
 ### Latest release:
 
 [//]: # (BEGIN release)
@@ -16,7 +15,6 @@
 [//]: # (END release)
 
 
-<a name="previous"></a>
 ### Previous releases:
 
 [//]: # (BEGIN previous)
@@ -29,7 +27,6 @@
 [//]: # (END previous)
 
 
-<a name="prerelease"></a>
 ### Latest pre-release:
 
 [//]: # (BEGIN prerelease)
@@ -42,7 +39,6 @@
 [//]: # (END prerelease)
 
 
-<a name="wip_master"></a>
 ### WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
@@ -55,7 +51,6 @@
 [//]: # (END wip_master)
 
 
-<a name="wip_pr"></a>
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
@@ -68,7 +63,6 @@
 [//]: # (END wip_pr)
 
 
-<a name="other"></a>
 ### Other downloads:
 
 *   [Driver for X10 remotes (32-bit)](http://eventghost.net/downloads/x10drivers_x86.exe)
