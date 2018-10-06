@@ -1,3 +1,8 @@
+## [0.0.1-alpha1](https://github.com/topic2k/EventGhost/releases/tag/v0.0.1-alpha1) (2018-10-06)
+
+Only minor changes in this release.
+
+
 ## [1.1.3](https://github.com/topic2k/EventGhost/releases/tag/v1.1.3) (2018-10-06)
 
 **Enhancements:**
