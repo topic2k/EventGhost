@@ -256,12 +256,7 @@ on_success:
 
       } elseif ($Env:APPVEYOR_REPO_TAG -eq "true" ) {        
         # Update download section for tags (prereleases and releases)
-        https://github.com/topic2k/EventGhost/releases/download/v0.9.16/EventGhost_0.9.16_Setup.exe
-        https://github.com/topic2k/EventGhost/releases/tag/v0.9.16
-        
         $rel_url = "https://github.com/" + $APPVEYOR_REPO_NAME + "/releases/"
-        $tag/v" + $Env:build_version
-        
         $new_text = "* [EventGhost " + $Env:build_version + "](" + $rel_url + "download/"
         $new_text += $Env:build_version + "/" + $Env:SetupExe + ")"
         $new_text += " - [[GitHub release page]](" + $rel_url + "tag/" + $Env:build_version + ")"
