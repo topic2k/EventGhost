@@ -250,7 +250,8 @@ on_success:
 
       if ($Env:APPVEYOR_PULL_REQUEST_NUMBER) {
         # Update downloads section for pull requests
-        $new_text += " - [[#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "]](https://github.com/topic2k/EventGhost/pull/"
+        $new_text += " - [[#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "]](https://github.com/"
+        $new_text += $Env:APPVEYOR_REPO_NAME + "/EventGhost/pull/"
         $new_text += $env:APPVEYOR_PULL_REQUEST_NUMBER + ") " + $env:APPVEYOR_PULL_REQUEST_TITLE
         $new_dl_txt = edit-downloads 'wip_pr' $dl_txt $new_text 10
 
@@ -278,7 +279,7 @@ on_success:
 
         # Update download section for commits to master aka WIP
         $new_text += " - [[commit " + $env:APPVEYOR_REPO_COMMIT.Substring(0, 8)
-        $new_text += "]](https://github.com/topic2k/EventGhost/commit/"
+        $new_text += "]](https://github.com/" + $Env:APPVEYOR_REPO_NAME +"/EventGhost/commit/"
         $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
         $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text 5
 
