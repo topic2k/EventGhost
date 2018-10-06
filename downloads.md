@@ -28,11 +28,11 @@
 ### Latest pre-release:
 
 [//]: # (BEGIN prerelease)
+* [EventGhost 0.11.7-rc3](https://github.com//releases/download/0.11.7-rc3/EventGhost_0.11.7-rc3_Setup.exe) - [[GitHub release page]](https://github.com//releases/tag/0.11.7-rc3)
 * [EventGhost 0.5.11-rc43](https://ci.appveyor.com/api/buildjobs/nkx1g3g4d8da1wxj/artifacts/_build/output/EventGhost_0.5.11-rc43_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.5.11-rc43)
 *   [EventGhost 0.5.0-rc4](https://github.com/EventGhost/EventGhost/releases/download/v0.5.0-rc4/EventGhost_0.5.0-rc4_Setup.exe) [[source]](https://github.com/EventGhost/EventGhost/archive/v0.5.0-rc4.zip), Jul 16 2017
 *   [EventGhost 0.5.0-rc3](https://github.com/EventGhost/EventGhost/releases/download/v0.5.0-rc3/EventGhost_0.5.0-rc3_Setup.exe) [[source]](https://github.com/EventGhost/EventGhost/archive/v0.5.0-rc3.zip), Jul 3 2017
 *   [EventGhost 0.5.0-rc2](https://github.com/EventGhost/EventGhost/releases/download/v0.5.0-rc2/EventGhost_0.5.0-rc2_Setup.exe) [[source]](https://github.com/EventGhost/EventGhost/archive/v0.5.0-rc2.zip), Apr 20 2017
-*   [EventGhost 0.5.0-rc1](https://github.com/EventGhost/EventGhost/releases/download/v0.5.0-rc1/EventGhost_0.5.0-rc1_Setup.exe) [[source]](https://github.com/EventGhost/EventGhost/archive/v0.5.0-rc1.zip), Apr 16 2017
 
 [//]: # (END prerelease)
 
