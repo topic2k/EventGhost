@@ -1,3 +1,10 @@
+## [0.8.15](https://github.com/topic2k/EventGhost/releases/tag/v0.8.15) (2018-10-06)
+
+**Other changes:**
+
+* Create requirements.txt [\#87](https://github.com/topic2k/EventGhost/pull/87) ([topic2k](https://github.com/topic2k))
+
+
 ## [0.5.0-rc4](https://github.com/EventGhost/EventGhost/releases/tag/v0.5.0-rc4) (2017-07-16)
 
 **Enhancements:**
