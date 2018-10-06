@@ -1,6 +1,11 @@
-[Latest release](#release) &nbsp;&nbsp;&nbsp; [Previous releases](#previous) &nbsp;&nbsp;&nbsp; [Pre-releases](#prerelease) &nbsp;&nbsp;&nbsp; [WIP](#wip_master) &nbsp;&nbsp;&nbsp; [Pull Requests](#wip_pr) &nbsp;&nbsp;&nbsp; [Other downloads](#other)
- 
- ---
+[Latest release](#release) &nbsp;&nbsp;&nbsp;
+[Previous releases](#previous) &nbsp;&nbsp;&nbsp;
+[Pre-releases](#prerelease) &nbsp;&nbsp;&nbsp;
+[WIP](#wip_master) &nbsp;&nbsp;&nbsp;
+[Pull Requests](#wip_pr) &nbsp;&nbsp;&nbsp;
+[Other downloads](#other)
+
+---
 
 <a name="release"></a>
 ### Latest release:
