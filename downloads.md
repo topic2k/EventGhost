@@ -6,7 +6,7 @@
 ### Latest release:
 
 [//]: # (BEGIN release)
-* [EventGhost 0.9.16](https://ci.appveyor.com/api/buildjobs/uc35khgxcuoic24b/artifacts/_build/output/EventGhost_0.9.16_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.9.16)
+* [EventGhost 1.1.3](https://github.com/topic2k/EventGhost/releases/download/v1.1.3/EventGhost_1.1.3_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v1.1.3)
 
 [//]: # (END release)
 
@@ -15,11 +15,11 @@
 ### Previous releases:
 
 [//]: # (BEGIN previous)
+* [EventGhost 0.9.16](https://ci.appveyor.com/api/buildjobs/uc35khgxcuoic24b/artifacts/_build/output/EventGhost_0.9.16_Setup.exe) - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v0.9.16)
 *   [EventGhost 0.4.1.r1722](EventGhost_0.4.1.r1722_Setup.exe) [[source]](EventGhost_0.4.1.r1722_Source.zip), Feb 03 2016
 *   [EventGhost 0.4.1.r1710](http://eventghost.net/downloads/EventGhost_0.4.1.r1710_Setup.exe), Oct 24 2015
 *   [EventGhost 0.4.1.r1706](http://eventghost.net/downloads/EventGhost_0.4.1.r1706_Setup.exe), Oct 03 2015
 *   [EventGhost 0.4.1.r1700](http://eventghost.net/downloads/EventGhost_0.4.1.r1700_Setup.exe), Mar 04 2015
-*   [EventGhost 0.4.1.r1694](http://eventghost.net/downloads/EventGhost_0.4.1.r1694_Setup.exe), Jan 27 2015
 
 [//]: # (END previous)
 
