@@ -135,9 +135,9 @@ install:
       {
         # do a release
         git checkout -q master
-        $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
+        $env:release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
-        python "_build\Build.py" --build --package --release --version $release $url
+        python "_build\Build.py" --build --package --release --version $env:release $url
       } Else {
         # WIP
         # start-process powershell_ise.exe
@@ -150,8 +150,8 @@ install:
       # update the appveyor build version to be the same as the EventGhost version
       $start = $env:SetupExe.IndexOf("_")
       $length = $env:SetupExe.LastIndexOf("_") - $start
-      $build_version = $env:SetupExe.Substring($start + 1, $length - 1)
-      Update-AppveyorBuild -Version "$build_version"
+      $env:build_version = $env:SetupExe.Substring($start + 1, $length - 1)
+      Update-AppveyorBuild -Version "$env:build_version"
 
       # Make sure the appveyor cache is only saved if our build was successfull
       If (-Not (Test-Path(".\EventGhost.exe"))) {$env:APPVEYOR_CACHE_SKIP_SAVE = "true"}
@@ -197,13 +197,13 @@ on_success:
       PowerShell_ISE.exe
       $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-      $SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
-      if (-not ($SetupExe)){
-        exit
-      }
-      $start = $SetupExe.IndexOf("_")
-      $length = $SetupExe.LastIndexOf("_") - $start
-      $version = $SetupExe.Substring($start + 1, $length - 1)
+      # $Env:SetupExe = gci -recurse -filter "_build\output\*Setup.exe" -name
+      #if (-not ($Env:SetupExe)){
+      #  exit
+      #}
+      #$start = $Env:SetupExe.IndexOf("_")
+      #$length = $Env:SetupExe.LastIndexOf("_") - $start
+      #$Env:build_version = $Env:SetupExe.Substring($start + 1, $length - 1)
 
       Function edit-downloads {
           Param ($blockId, $in, $new, $cnt=5)
@@ -254,8 +254,8 @@ on_success:
       git checkout --quiet gh-pages
       $dl_txt = Get-Content 'downloads.md'
       $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
-      $artifact_url += "/artifacts/_build/output/EventGhost_" + $version + "_Setup.exe"
-      $new_text = "* [EventGhost " + $version + "](" + $artifact_url + ")"
+      $artifact_url += "/artifacts/_build/output/EventGhost_" + $Env:build_version + "_Setup.exe"
+      $new_text = "* [EventGhost " + $Env:build_version + "](" + $artifact_url + ")"
 
       if ($Env:APPVEYOR_PULL_REQUEST_NUMBER) {
         # Update downloads section for pull requests
@@ -269,9 +269,9 @@ on_success:
         
         # Update download section for tags (prereleases and releases)
         $new_text += " - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v"
-        $new_text += $version + ")"
+        $new_text += $Env:build_version + ")"
 
-        if ( $version.Contains("-") ) {
+        if ( $Env:build_version.Contains("-") ) {
           # We assume this is a prereleas because it contains '-' in its version string
           $new_dl_txt = edit-downloads 'prerelease' $dl_txt $new_text 5
 
@@ -295,7 +295,7 @@ on_success:
       }
       if (-not $new_dl_txt) { exit }
       Set-Content -value $new_dl_txt -path 'downloads.md'
-      $msg = "Update downloads.md (" + $version + ")"
+      $msg = "Update downloads.md (" + $Env:build_version + ")"
       $url = git remote get-url origin
       $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
       git remote set-url origin $urlnew
