@@ -252,12 +252,6 @@ on_success:
       }
 
       git checkout --quiet gh-pages
-
-      $url = git remote get-url origin
-      $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
-      git remote set-url origin $urlnew
-
-
       $dl_txt = Get-Content 'downloads.md'
       $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
       $artifact_url += "/artifacts/_build/output/EventGhost_" + $version + "_Setup.exe"
@@ -270,6 +264,9 @@ on_success:
         $new_dl_txt = edit-downloads 'wip_pr' $dl_txt $new_text 10
 
       } elseif ($Env:APPVEYOR_REPO_TAG -eq "true" ) {
+        # don't create a line for deploy tag
+        if ( $Env:APPVEYOR_REPO_TAG_NAME.ToLower().StartsWith("deploy") ) { exit }
+        
         # Update download section for tags (prereleases and releases)
         $new_text += " - [[GitHub release page]](https://github.com/topic2k/EventGhost/releases/tag/v"
         $new_text += $version + ")"
@@ -296,9 +293,12 @@ on_success:
         $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text 5
 
       }
-
+      if (-not $new_dl_txt) { exit }
       Set-Content -value $new_dl_txt -path 'downloads.md'
       $msg = "Update downloads.md (" + $version + ")"
+      $url = git remote get-url origin
+      $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
+      git remote set-url origin $urlnew
       git add --ignore-errors downloads.md
       git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit -q -m $msg
       git push -q
