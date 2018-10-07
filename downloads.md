@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2018.10.07-13.59.07](https://ci.appveyor.com/api/buildjobs/85twigbm03b46cmp/artifacts/_build/output/EventGhost_WIP-2018.10.07-13.59.07_Setup.exe) - [[#98]](https://github.com/topic2k/EventGhost/pull/98) Scheduled daily dependency update on sunday
 * [EventGhost WIP-2018.10.06-13.59.31](https://ci.appveyor.com/api/buildjobs/oiqye3w7qq1mo1br/artifacts/_build/output/EventGhost_WIP-2018.10.06-13.59.31_Setup.exe) - [[#97]](https://github.com/topic2k/EventGhost/pull/97) Scheduled daily dependency update on saturday
 * [EventGhost WIP-2018.10.06-06.56.57](https://ci.appveyor.com/api/buildjobs/d94obl7n14jvyd2n/artifacts/_build/output/EventGhost_WIP-2018.10.06-06.56.57_Setup.exe) - [[#87]](https://github.com/topic2k/EventGhost/pull/87) Create requirements.txt
 * [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
