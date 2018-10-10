@@ -42,11 +42,11 @@
 ### WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
+* [EventGhost WIP-2018.10.10-16.06.13](https://ci.appveyor.com/api/buildjobs/82oc6i27twmqybgl/artifacts/_build/output/EventGhost_WIP-2018.10.10-16.06.13_Setup.exe) - [[commit b8c62772]](https://github.com/topic2k/EventGhost/commit/b8c62772208e7d8beddacccea5c30c657f32681d) Update .pyup.yml
 * [EventGhost WIP-2018.10.06-11.05.14](https://ci.appveyor.com/api/buildjobs/y0j1qorww8y6wo4c/artifacts/_build/output/EventGhost_WIP-2018.10.06-11.05.14_Setup.exe) - [[commit 4c173ac3]](https://github.com/topic2k/EventGhost/commit/4c173ac3317ea67895fa505a938a62a1b63a1c99) Update .appveyor.yml
 * [EventGhost ](https://ci.appveyor.com/api/buildjobs/0cib7vdrtic5di7y/artifacts/_build/output/) - [[commit 4c173ac3]](https://github.com/topic2k/EventGhost/commit/4c173ac3317ea67895fa505a938a62a1b63a1c99) Update .appveyor.yml
 * [EventGhost WIP-2018.10.06-10.38.23](https://ci.appveyor.com/api/buildjobs/06ib2rvbfvhj8mmw/artifacts/_build/output/EventGhost_WIP-2018.10.06-10.38.23_Setup.exe) - [[commit 9fa547b8]](https://github.com/topic2k/EventGhost/commit/9fa547b866c7592778002dd6a0ff0553a913d362) Merge pull request #96 from topic2k/topic2k-patch-1
 * [EventGhost WIP-2018.10.06-10.17.07](https://ci.appveyor.com/api/buildjobs/049lw9s8ysm34a99/artifacts/_build/output/EventGhost_WIP-2018.10.06-10.17.07_Setup.exe) - [[commit f595c88f]](https://github.com/topic2k/EventGhost/commit/f595c88fb777918e6a00ca197381b208ee210c93) Update README.md
-* [EventGhost WIP-2018.10.06-10.13.59](https://ci.appveyor.com/api/buildjobs/hq5385nc1oa9gyv8/artifacts/_build/output/EventGhost_WIP-2018.10.06-10.13.59_Setup.exe) - [[commit 4aff2386]](https://github.com/topic2k/EventGhost/commit/4aff238679344a755fe7fe394b3fcfe44a591943) Create .pyup.yml
 
 [//]: # (END wip_master)
 
