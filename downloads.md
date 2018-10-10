@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2018.10.10-14.03.59](https://ci.appveyor.com/api/buildjobs/m9y9yyo88n1brsiq/artifacts/_build/output/EventGhost_WIP-2018.10.10-14.03.59_Setup.exe) - [[#101]](https://github.com/topic2k/EventGhost/pull/101) Scheduled daily dependency update on wednesday
 * [EventGhost WIP-2018.10.09-14.07.53](https://ci.appveyor.com/api/buildjobs/n2n99u9fs3a60wij/artifacts/_build/output/EventGhost_WIP-2018.10.09-14.07.53_Setup.exe) - [[#100]](https://github.com/topic2k/EventGhost/pull/100) Scheduled daily dependency update on tuesday
 * [EventGhost WIP-2018.10.08-14.07.38](https://ci.appveyor.com/api/buildjobs/vo72jjjyuj0780ys/artifacts/_build/output/EventGhost_WIP-2018.10.08-14.07.38_Setup.exe) - [[#99]](https://github.com/topic2k/EventGhost/pull/99) Scheduled daily dependency update on monday
 * [EventGhost WIP-2018.10.07-13.59.07](https://ci.appveyor.com/api/buildjobs/85twigbm03b46cmp/artifacts/_build/output/EventGhost_WIP-2018.10.07-13.59.07_Setup.exe) - [[#98]](https://github.com/topic2k/EventGhost/pull/98) Scheduled daily dependency update on sunday
