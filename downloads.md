@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2018.10.22-21.06.08](https://ci.appveyor.com/api/buildjobs/l1pv7vsu30h60n62/artifacts/_build/output/EventGhost_WIP-2018.10.22-21.06.08_Setup.exe) - [[#103]](https://github.com/topic2k/EventGhost/pull/103) Scheduled weekly dependency update for week 42
 * [EventGhost WIP-2018.10.15-19.05.15](https://ci.appveyor.com/api/buildjobs/i64kyaqs5cfp2lop/artifacts/_build/output/EventGhost_WIP-2018.10.15-19.05.15_Setup.exe) - [[#102]](https://github.com/topic2k/EventGhost/pull/102) Scheduled weekly dependency update for week 41
 * [EventGhost WIP-2018.10.10-14.03.59](https://ci.appveyor.com/api/buildjobs/m9y9yyo88n1brsiq/artifacts/_build/output/EventGhost_WIP-2018.10.10-14.03.59_Setup.exe) - [[#101]](https://github.com/topic2k/EventGhost/pull/101) Scheduled daily dependency update on wednesday
 * [EventGhost WIP-2018.10.09-14.07.53](https://ci.appveyor.com/api/buildjobs/n2n99u9fs3a60wij/artifacts/_build/output/EventGhost_WIP-2018.10.09-14.07.53_Setup.exe) - [[#100]](https://github.com/topic2k/EventGhost/pull/100) Scheduled daily dependency update on tuesday
@@ -63,7 +64,6 @@
 * [EventGhost WIP-2018.10.06-06.56.57](https://ci.appveyor.com/api/buildjobs/d94obl7n14jvyd2n/artifacts/_build/output/EventGhost_WIP-2018.10.06-06.56.57_Setup.exe) - [[#87]](https://github.com/topic2k/EventGhost/pull/87) Create requirements.txt
 * [WIP-2018.04.10-17.57.02](https://ci.appveyor.com/api/buildjobs/7aovd89mhbwo80um/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.57.02_Setup.exe) [#308](https://github.com/topic2k/EventGhost/pull/308) add an exception for the CLI argument -event to allow '=' in payload
 * [WIP-2018.04.10-17.31.18](https://ci.appveyor.com/api/buildjobs/exo7n7fbtib6fxo5/artifacts/_build/output/EventGhost_WIP-2018.04.10-17.31.18_Setup.exe) [#307](https://github.com/topic2k/EventGhost/pull/307) NamedPipe.py: move exception declaration to the top of file
-* [791-master](https://ci.appveyor.com/api/buildjobs/qavo6fq423et77a5/artifacts/_build/output/EventGhost_WIP-2018.03.08-17.08.31_Setup.exe) [#306](https://github.com/topic2k/EventGhost/pull/306) Update .appveyor.yml
 
 [//]: # (END wip_pr)
 
