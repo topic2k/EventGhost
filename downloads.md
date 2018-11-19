@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost ](https://ci.appveyor.com/api/buildjobs/vxc3umw066kdvc4h/artifacts/_build/output/) - [[#107]](https://github.com/topic2k/EventGhost/pull/107) Scheduled weekly dependency update for week 46
 * [EventGhost WIP-2018.11.12-20.15.26](https://ci.appveyor.com/api/buildjobs/cblbsdhq7dipuwhw/artifacts/_build/output/EventGhost_WIP-2018.11.12-20.15.26_Setup.exe) - [[#106]](https://github.com/topic2k/EventGhost/pull/106) Scheduled weekly dependency update for week 45
 * [EventGhost WIP-2018.11.05-19.24.18](https://ci.appveyor.com/api/buildjobs/82x7ja3eh2rf42s7/artifacts/_build/output/EventGhost_WIP-2018.11.05-19.24.18_Setup.exe) - [[#105]](https://github.com/topic2k/EventGhost/pull/105) Scheduled weekly dependency update for week 44
 * [EventGhost WIP-2018.10.29-19.23.43](https://ci.appveyor.com/api/buildjobs/0ph2fsl5asg5qpb8/artifacts/_build/output/EventGhost_WIP-2018.10.29-19.23.43_Setup.exe) - [[#104]](https://github.com/topic2k/EventGhost/pull/104) Scheduled weekly dependency update for week 43
@@ -63,7 +64,6 @@
 * [EventGhost WIP-2018.10.09-14.07.53](https://ci.appveyor.com/api/buildjobs/n2n99u9fs3a60wij/artifacts/_build/output/EventGhost_WIP-2018.10.09-14.07.53_Setup.exe) - [[#100]](https://github.com/topic2k/EventGhost/pull/100) Scheduled daily dependency update on tuesday
 * [EventGhost WIP-2018.10.08-14.07.38](https://ci.appveyor.com/api/buildjobs/vo72jjjyuj0780ys/artifacts/_build/output/EventGhost_WIP-2018.10.08-14.07.38_Setup.exe) - [[#99]](https://github.com/topic2k/EventGhost/pull/99) Scheduled daily dependency update on monday
 * [EventGhost WIP-2018.10.07-13.59.07](https://ci.appveyor.com/api/buildjobs/85twigbm03b46cmp/artifacts/_build/output/EventGhost_WIP-2018.10.07-13.59.07_Setup.exe) - [[#98]](https://github.com/topic2k/EventGhost/pull/98) Scheduled daily dependency update on sunday
-* [EventGhost WIP-2018.10.06-13.59.31](https://ci.appveyor.com/api/buildjobs/oiqye3w7qq1mo1br/artifacts/_build/output/EventGhost_WIP-2018.10.06-13.59.31_Setup.exe) - [[#97]](https://github.com/topic2k/EventGhost/pull/97) Scheduled daily dependency update on saturday
 
 [//]: # (END wip_pr)
 
