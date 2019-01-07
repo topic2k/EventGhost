@@ -3,7 +3,7 @@
 # InnoSetup 5.5.9
 # wxPython 3.0.2
 
-pip==9.0.1
+pip==18.1
 setuptools==34.3.0
 wheel==0.29.0
 # sphinx >= 1.4.9 installs jinja2 >= 2.3 as dependency,
