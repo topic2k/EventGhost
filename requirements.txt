@@ -11,7 +11,7 @@ wheel==0.32.3
 # problems with (build of eg will fail)
 jinja2==2.8.1  # pyup: >=2.8,<2.9
 sphinx==1.5.6  # pyup: <1.6
-commonmark==0.7.3
+commonmark==0.8.1
 pillow==3.4.2
 py2exe_py2==0.6.9
 pycrypto==2.6.1
