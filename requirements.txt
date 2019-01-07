@@ -5,7 +5,7 @@
 
 pip==18.1
 setuptools==40.6.3
-wheel==0.29.0
+wheel==0.32.3
 # sphinx >= 1.4.9 installs jinja2 >= 2.3 as dependency,
 # jinja2 >= 2.9 has an async module which py2exe has
 # problems with (build of eg will fail)
