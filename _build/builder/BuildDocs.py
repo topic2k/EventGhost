@@ -109,7 +109,7 @@ def call_sphinx(builder, build_setup, dest_dir):
             # "-D", "templates_path=[]",
             '-q',    # be quiet
             # "-a",  # always write all output files
-            # "-E",  # Don’t use a saved environment (the structure
+            "-E",    # Don’t use a saved environment (the structure
                      # caching all cross-references),
             # "-N",  # Prevent colored output.
             # "-P",  # (Useful for debugging only.) Run the Python debugger,

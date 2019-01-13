@@ -184,8 +184,8 @@ artifacts:
 # on successful build
 on_success:
   - ps: |
-      PowerShell_ISE.exe
-      $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      # PowerShell_ISE.exe
+      # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
       Function edit-downloads {
           Param ($blockId, $in, $new, $cnt=5)
