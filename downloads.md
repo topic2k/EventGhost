@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2019.01.13-18.38.18](https://ci.appveyor.com/api/buildjobs/wtd26vtroubfwoas/artifacts/_build/output/EventGhost_WIP-2019.01.13-18.38.18_Setup.exe) - [[#117]](https://github.com/topic2k/EventGhost/pull/117) Update wx to version 4.0.4
 * [EventGhost WIP-2019.01.13-15.57.21](https://ci.appveyor.com/api/buildjobs/4hrja69l2ajh4em6/artifacts/_build/output/EventGhost_WIP-2019.01.13-15.57.21_Setup.exe) - [[#117]](https://github.com/topic2k/EventGhost/pull/117) Update wx to version 4.0.4
 * [EventGhost ](https://ci.appveyor.com/api/buildjobs/ubu88e9mjey504eb/artifacts/_build/output/) - [[#117]](https://github.com/topic2k/EventGhost/pull/117) Update wx to version 4.0.4
 * [EventGhost WIP-2019.01.07-20.01.53](https://ci.appveyor.com/api/buildjobs/vir8hq6d9an271p0/artifacts/_build/output/EventGhost_WIP-2019.01.07-20.01.53_Setup.exe) - [[#115]](https://github.com/topic2k/EventGhost/pull/115) Scheduled weekly dependency update for week 01
@@ -63,7 +64,6 @@
 * [EventGhost WIP-2018.11.05-19.24.18](https://ci.appveyor.com/api/buildjobs/82x7ja3eh2rf42s7/artifacts/_build/output/EventGhost_WIP-2018.11.05-19.24.18_Setup.exe) - [[#105]](https://github.com/topic2k/EventGhost/pull/105) Scheduled weekly dependency update for week 44
 * [EventGhost WIP-2018.10.29-19.23.43](https://ci.appveyor.com/api/buildjobs/0ph2fsl5asg5qpb8/artifacts/_build/output/EventGhost_WIP-2018.10.29-19.23.43_Setup.exe) - [[#104]](https://github.com/topic2k/EventGhost/pull/104) Scheduled weekly dependency update for week 43
 * [EventGhost WIP-2018.10.22-21.06.08](https://ci.appveyor.com/api/buildjobs/l1pv7vsu30h60n62/artifacts/_build/output/EventGhost_WIP-2018.10.22-21.06.08_Setup.exe) - [[#103]](https://github.com/topic2k/EventGhost/pull/103) Scheduled weekly dependency update for week 42
-* [EventGhost WIP-2018.10.15-19.05.15](https://ci.appveyor.com/api/buildjobs/i64kyaqs5cfp2lop/artifacts/_build/output/EventGhost_WIP-2018.10.15-19.05.15_Setup.exe) - [[#102]](https://github.com/topic2k/EventGhost/pull/102) Scheduled weekly dependency update for week 41
 
 [//]: # (END wip_pr)
 
