@@ -258,7 +258,7 @@ DEPENDENCIES = [
     ModuleDependency(
         name = "Sphinx",
         module = "sphinx",
-        version = "1.8.3",
+        version = "1.8.0",
     ),
     StacklessDependency(),
     ModuleDependency(
