@@ -52,6 +52,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost WIP-2019.01.13-19.48.12](https://ci.appveyor.com/api/buildjobs/2lyw0nv7qa8hrb7h/artifacts/_build/output/EventGhost_WIP-2019.01.13-19.48.12_Setup.exe) - [[#117]](https://github.com/topic2k/EventGhost/pull/117) Update wx to version 4.0.4
 * [EventGhost WIP-2019.01.06-21.49.04](https://ci.appveyor.com/api/buildjobs/tq4c3vykj4fug4ii/artifacts/_build/output/EventGhost_WIP-2019.01.06-21.49.04_Setup.exe) - [[#356]](https://github.com/EventGhost/EventGhost/pull/356) Fix issue when locale has no translation (OptionsDialog.py), and right to left bug on (SpinNumCtrl.py)
 * [EventGhost WIP-2019.01.07-03.54.38](https://ci.appveyor.com/api/buildjobs/xnsa6gso8sti88yp/artifacts/_build/output/EventGhost_WIP-2019.01.07-03.54.38_Setup.exe) - [[#355]]([EventGhost] TriggerEvent: option to remove the 'Main' prefix
 * [EventGhost WIP-2019.01.07-20.05.07](https://ci.appveyor.com/api/buildjobs/h3nw1s9vec3y1r2y/artifacts/_build/output/EventGhost_WIP-2019.01.07-20.05.07_Setup.exe) - [[#342]](https://github.com/EventGhost/EventGhost/pull/342) [Atric IR-WakeupUSB] New plugin
