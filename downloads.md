@@ -40,11 +40,11 @@
 ### WIP builds of master branch
 
 [//]: # (BEGIN wip_master)
+* [EventGhost WIP-2019.01.13-19.53.41](https://ci.appveyor.com/api/buildjobs/sr96b4urxj4rip1j/artifacts/_build/output/EventGhost_WIP-2019.01.13-19.53.41_Setup.exe) - [[commit 50da7b8d]](https://github.com/topic2k/EventGhost/commit/50da7b8dd933bb45ab4faec837d4b5ecf8f80eae) Update wx to version 4.0.4 (#117)
 * [EventGhost WIP-2019.01.13-10.32.57](https://ci.appveyor.com/api/buildjobs/7f0rpjywby9y9adf/artifacts/_build%2Foutput%2FEventGhost_WIP-2019.01.13-10.32.57_Setup.exe) - [[commit d6b167f3]](https://github.com/EventGhost/EventGhost/commit/d6b167f30e3dd420d130b715b554a7ce886e42b7) Fix issue when locale has no translation (OptionsDialog.py), and right to left bug on (SpinNumCtrl.py) (#356)
 * [EventGhost WIP-2019.01.09-16.30.32](https://ci.appveyor.com/api/buildjobs/qongswh1aofy4dh7/artifacts/_build%2Foutput%2FEventGhost_WIP-2019.01.09-16.30.32_Setup.exe) - [[commit fa287c79]](https://github.com/EventGhost/EventGhost/commit/fa287c79bbeec660b2657878911f732f395c720f) [Atric IR-WakeupUSB] New plugin (#342)
 * [EventGhost WIP-2019.01.09-16.25.09](https://ci.appveyor.com/api/buildjobs/6f5pmmllglfoiw4r/artifacts/_build%2Foutput%2FEventGhost_WIP-2019.01.09-16.25.09_Setup.exe) - [[commit 235b0855]](https://github.com/EventGhost/EventGhost/commit/235b0855f6a03e2357eef3f28178ab7b6b4ad800) [EventGhost] TriggerEvent: option to remove the 'Main' prefix (#355)
 * [EventGhost WIP-2019.01.07-18.01.28](https://ci.appveyor.com/api/buildjobs/69dk1ab179fhxhy2/artifacts/_build%2Foutput%2FEventGhost_WIP-2019.01.07-18.01.28_Setup.exe) - [[commit 8243c9ae]](https://github.com/EventGhost/EventGhost/commit/8243c9ae130140f761e5cdf04366fb835611208a) [VLC] add 64 bit support, fix play, volup and voldown (#341)
-* [EventGhost WIP-2019.01.06-13.59.35](https://ci.appveyor.com/api/buildjobs/w4812bu64ae3jsi2/artifacts/_build%2Foutput%2FEventGhost_WIP-2019.01.06-13.59.35_Setup.exe) - [[commit 0a8a52b3]](https://github.com/EventGhost/EventGhost/commit/0a8a52b35f536310d91c1c98088c41005a6c241f) Merge pull request #353 from topic2k/fix_log_window_context_menu
 
 [//]: # (END wip_master)
 
