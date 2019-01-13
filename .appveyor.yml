@@ -1,10 +1,25 @@
 # In AppVeyor's web config add an enviremont variable named GITHUB_TOKEN.
 # Set it to a token you've created on GitHub.
-# To draft a release on GitHub with AppVeyor, create a tag on master.
+#
+# To draft a release on GitHub with AppVeyor, create a tag in the form "deploy_VERSION"
+# VERSION must be a valid version string (without leading 'v')
+# this tag will be deleted and a new release "vVERSION" created.
+# Example:
+#   manually created tag is: deploy_42.05.04-beta47
+#   automatically created releaase will be: v42.05.04-beta47
 
 
 version: '{build}-{branch}'
 
+# branches to build
+branches:
+  # whitelist
+  # only:
+  #   - master
+
+  # blacklist
+  except:
+    - gh-pages
 
 #init:
 #  # Enable Remotedesktop and pause the build execution
@@ -37,6 +52,8 @@ install:
   # Microsoft Visual C++ Redistributable 2008 (version min: 9.0.21022.8)
   # - cinst vcredist2008
 
+  # - cinst pycharm
+
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: |
       $Env:PATH = $Env:PATH -replace "Python27", "Stackless27"
@@ -59,46 +76,38 @@ install:
           " "
           "--- " + $msg
           "    Installing..."
-          pip install -q $mod
+          pip install -q --disable-pip-version-check $mod
           "    Done."
         }
         " "
-        "--- Stackless 2.7.12150 x86"
-        $StacklessInstaller = $InstallersFolder + "python-2.7.12150-stackless.msi"
+        "--- Stackless 2.7.15150 x86"
+        $fname = "python-2.7.15150-stackless.msi"
+        $StacklessInstaller = $InstallersFolder + $fname
         $StacklessInstallDir = "TARGETDIR=" + $PythonFolder
-        $StacklessURL = "http://www.stackless.com/binaries/python-2.7.12150-stackless.msi"
+        $StacklessURL = "http://www.stackless.com/binaries/" + $fname
         Start-FileDownload $StacklessURL -Timeout 60000 -FileName $StacklessInstaller
         "    Installing..."
         Start-Process MsiExec.exe -Arg "/I $StacklessInstaller /quiet /passive /qn /norestart $StacklessInstallDir" -Wait
         "    Done."
         " "
-        "--- wxPython 3.0.2.0"
-        $WXInstaller = $InstallersFolder + "wxPython3.0-win32-3.0.2.0-py27.exe"
-        $WXURL = "http://downloads.sourceforge.net/wxpython/wxPython3.0-win32-3.0.2.0-py27.exe"
-        Start-FileDownload $WXURL -Timeout 60000 -FileName $WXInstaller
-        "    Installing..."
-        Start-Process $WXInstaller -Arg "/VERYSILENT /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        "--- pip 9.0.3"
+        "    Updating..."
+        python -m pip install --disable-pip-version-check --no-cache-dir -q -U "pip==9.0.3"
         "    Done."
         " "
-        "--- pip 9.0.1"
-        "    Updating..."
-        python -m pip install --no-cache-dir -q -U "pip==9.0.1"
-        "    Done."
-        " "
-        "--- setuptools 34.3.0"
-        "    Updating..."
-        pip install -q -U "setuptools==34.3.0"
-        "    Done."
-        PipInstall "wheel 0.29.0" "wheel==0.29.0"
-        PipInstall "sphinx 1.7.5" "sphinx==1.7.5"
-        PipInstall "commonmark 0.7.3" "commonmark==0.7.3"
-        PipInstall "pillow 3.4.2" "pillow==3.4.2"
+        # Pinned sphinx to 1.8.0 because 1.8.1 has changes that will throw a warning when building the docs
+        # https://github.com/sphinx-doc/sphinx/compare/v1.8.0...v1.8.1
+        PipInstall "sphinx 1.8.0" "sphinx==1.8.0"
+        PipInstall "wxPython 4.0.4" "wxPython==4.0.4"
+        PipInstall "commonmark 0.8.1" "commonmark==0.8.1"
+        PipInstall "pillow 5.4.1" "pillow==5.4.1"
         PipInstall "py2exe 0.6.9" "py2exe_py2==0.6.9"
-        PipInstall "pycrypto 2.6.1" "pycrypto==2.6.1"
-        PipInstall "comtypes 1.1.3" "https://github.com/enthought/comtypes/archive/1.1.3.zip"
         PipInstall "ctypeslib 0.5.6" "svn+http://svn.python.org/projects/ctypes/trunk/ctypeslib/#ctypeslib=0.5.6"
-        PipInstall "paramiko 2.2.1" "paramiko==2.2.1"
-        PipInstall "pywin32 223" pywin32==223
+        PipInstall "paramiko 2.4.2" "paramiko==2.4.2"
+        PipInstall "pywin32 224" "pywin32==224"
+        PipInstall "comtypes 1.1.7" "comtypes==1.1.7"
+        # PipInstall "comtypes 1.1.3" "https://github.com/enthought/comtypes/archive/1.1.3.zip"
+        # PipInstall "pycryptodome 3.7.2" "pycryptodome==3.7.2"  # included in repo:lib27/site-packeages
       }
       " "
       "--- pywin32 post install"
@@ -115,20 +124,21 @@ install:
       #"    Done."
       " "
       " "
+      # pip list
       "=============== start the EventGhost build ==============="
       " "
       If ($Env:APPVEYOR_REPO_TAG.tolower() -eq "true" -and
         $Env:APPVEYOR_REPO_TAG_NAME.tolower().startswith("deploy"))
       {
-        # to do a release, create a tag in the form "Deploy_VERSION"
-        # VERSION must be a valid version string (without leading 'v')
-        # this tag will be deleted and a new release "vVERSION" created.
+        # do a release
         git checkout -q master
-        $release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
+        $env:release = $Env:APPVEYOR_REPO_TAG_NAME.split("_", 2)[1]
         $url = if($Env:SFTP_URL){' --docs --url "' + $env:SFTP_URL + '"'} else {''}
-        python "_build\Build.py" --build --package --release --version $release $url
+        python "_build\Build.py" --build --package --release --version $env:release $url
       } Else {
         # WIP
+        # start-process powershell_ise.exe
+        # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
         python "_build\Build.py" --build --package
         .\EventGhost.exe -install
       }
@@ -137,8 +147,8 @@ install:
       # update the appveyor build version to be the same as the EventGhost version
       $start = $env:SetupExe.IndexOf("_")
       $length = $env:SetupExe.LastIndexOf("_") - $start
-      $build_version = $env:SetupExe.Substring($start + 1, $length - 1)
-      Update-AppveyorBuild -Version "$build_version"
+      $env:build_version = $env:SetupExe.Substring($start + 1, $length - 1)
+      Update-AppveyorBuild -Version "$env:build_version"
 
       # Make sure the appveyor cache is only saved if our build was successfull
       If (-Not (Test-Path(".\EventGhost.exe"))) {$env:APPVEYOR_CACHE_SKIP_SAVE = "true"}
@@ -175,6 +185,111 @@ artifacts:
     name: CHANGELOG_THIS_RELEASE.md
   - path: _build\output\CHANGELOG_THIS_RELEASE.bb
     name: CHANGELOG_THIS_RELEASE.bb
+
+
+# on successful build
+on_success:
+  - ps: |
+      # PowerShell_ISE.exe
+      # $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+      Function edit-downloads {
+          Param ($blockId, $in, $new, $cnt=5)
+          # PARAMETERS:
+          #   $blockId: [previous|prerelease|wip_master|wip_pr]
+          #   $in     : contents to be edited
+          #   $new    : line to be added
+          #   $cnt    : Number of entries to keep in section
+          
+          $out = @()
+          $copy = $true
+
+          $in | foreach {
+              if ($copy) {
+                  if ($_ -eq "[//]: # (BEGIN $blockId)") {
+                      # Tell the script that we now enter the section to edit
+                      $copy = $false
+                  }
+                  $out += $_
+              } else {
+                  if ($_ -eq "[//]: # (END $blockId)") {
+                      # Make sure the line before the END-marker is empty or we have unwanted output
+                      if ($out[-1] -ne "") { $out += "" }
+
+                      # Write the END-marker
+                      $out += $_
+
+                      # tell the script to continue with copying the following file contents
+                      $copy = $true
+                  }
+                  elseif ($cnt -gt 1) {
+                      if ($new) {
+                          # insert the new text
+                          $out += $new
+                          # and set $new to false because we want the new text only once
+                          $new = $false
+                      }
+                      # copy older entries/lines as we are below the wanted numbers of entries in this section
+                      $out += $_
+                      $cnt--
+                  }
+              }
+          }
+          # return the edited text
+          return $out
+      }
+
+      git checkout --quiet gh-pages
+      $dl_txt = Get-Content 'downloads.md'
+      $artifact_url = "https://ci.appveyor.com/api/buildjobs/" + $env:APPVEYOR_JOB_ID
+      $artifact_url += "/artifacts/_build/output/" + $Env:SetupExe
+      $new_text = "* [EventGhost " + $Env:build_version + "](" + $artifact_url + ")"
+
+      if ($Env:APPVEYOR_PULL_REQUEST_NUMBER) {
+        # Update downloads section for pull requests
+        $new_text += " - [[#" + $env:APPVEYOR_PULL_REQUEST_NUMBER + "]](https://github.com/"
+        $new_text += $Env:APPVEYOR_REPO_NAME + "/pull/"
+        $new_text += $env:APPVEYOR_PULL_REQUEST_NUMBER + ") " + $env:APPVEYOR_PULL_REQUEST_TITLE
+        $new_dl_txt = edit-downloads 'wip_pr' $dl_txt $new_text 10
+
+      } elseif ($Env:APPVEYOR_REPO_TAG -eq "true" ) {        
+        # Update download section for tags (prereleases and releases)
+        $rel_url = "https://github.com/" + $Env:APPVEYOR_REPO_NAME + "/releases/"
+        $new_text = "* [EventGhost " + $Env:build_version + "](" + $rel_url + "download/v"
+        $new_text += $Env:build_version + "/" + $Env:SetupExe + ")"
+        $new_text += " - [[GitHub release page]](" + $rel_url + "tag/v" + $Env:build_version + ")"
+
+        if ( $Env:build_version.Contains("-") ) {
+          # We assume this is a prereleas because it contains '-' in its version string
+          $new_dl_txt = edit-downloads 'prerelease' $dl_txt $new_text 5
+
+        } else {
+          # special handling for release:
+          #   move the actual release to previous and then replace the latest release
+          $idx_old_release = $dl_txt.IndexOf("[//]: # (BEGIN release)") + 1
+          $old_release = $dl_txt[$idx_old_release]
+          $dl_txt[$idx_old_release] = $new_text
+          $new_dl_txt = edit-downloads 'previous' $dl_txt $old_release 5
+
+        }
+      } elseif ($Env:APPVEYOR_REPO_BRANCH -eq "master" ) {
+
+        # Update download section for commits to master aka WIP
+        $new_text += " - [[commit " + $env:APPVEYOR_REPO_COMMIT.Substring(0, 8)
+        $new_text += "]](https://github.com/" + $Env:APPVEYOR_REPO_NAME +"/commit/"
+        $new_text += $env:APPVEYOR_REPO_COMMIT + ") " + $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        $new_dl_txt = edit-downloads 'wip_master' $dl_txt $new_text 5
+
+      }
+      if (-not $new_dl_txt) { exit }
+      Set-Content -value $new_dl_txt -path 'downloads.md'
+      $msg = "Update downloads.md (" + $Env:build_version + ")"
+      $url = git remote get-url origin
+      $urlnew = $url.Insert(8, $env:APPVEYOR_ACCOUNT_NAME + ":" + $env:GITHUB_TOKEN + "@")
+      git remote set-url origin $urlnew
+      git add --ignore-errors downloads.md
+      git -c user.email=$env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL -c user.name=$env:APPVEYOR_REPO_COMMIT_AUTHOR commit -q -m $msg
+      git push -q
 
 
 notifications:
@@ -222,7 +337,6 @@ notifications:
 #on_finish:
 #  # Enable Remotedesktop and pause the build execution
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
 
 # notifications:
 #   - provider: GitHubPullRequest
