@@ -20,16 +20,12 @@ import sys
 import threading
 import time
 import wx
-import ctypes
 
 # Local imports
 import eg
 from eg.WinApi.Dynamic import ExitProcess, SetProcessShutdownParameters
-from Translation import LCID_TO_WX
 
 IS_VISTA = eg.WindowsVersion >= 'Vista'
-
-kernel32 = ctypes.windll.kernel32
 
 if IS_VISTA:
     from eg.WinApi.Dynamic import _user32, BOOL, HWND, LPCWSTR
@@ -47,11 +43,6 @@ class App(wx.App):
     def __init__(self):
         self.onExitFuncs = []
         wx.App.__init__(self, 0)
-        lang_id = LCID_TO_WX.get(kernel32.GetUserDefaultUILanguage(), None)
-
-        if lang_id is not None:
-            self.locale = wx.Locale(lang_id)
-
         self.shouldVeto = False
         self.firstQuery = True
         self.endSession = False
@@ -110,8 +101,8 @@ class App(wx.App):
 
         currentThread = threading.currentThread()
 
-        while self.Pending():
-            self.Dispatch()
+        while self.HasPendingEvents():
+            self.ProcessPendingEvents()
 
         # try to wait till all utility threads have ended
         startTime = time.clock()
@@ -131,8 +122,8 @@ class App(wx.App):
             waitTime = time.clock() - startTime
             if waitTime > 5.0:
                 break
-            while self.Pending():
-                self.Dispatch()
+            while self.HasPendingEvents():
+                self.ProcessPendingEvents()
             time.sleep(0.01)
         eg.PrintDebugNotice(
             "Waited for threads shutdown: %f s" % (time.clock() - startTime)
