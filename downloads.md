@@ -54,6 +54,7 @@
 ### WIP builds of pull requests
 
 [//]: # (BEGIN wip_pr)
+* [EventGhost ](https://ci.appveyor.com/api/buildjobs/ubu88e9mjey504eb/artifacts/_build/output/) - [[#117]](https://github.com/topic2k/EventGhost/pull/117) Update wx to version 4.0.4
 * [EventGhost WIP-2019.01.07-20.01.53](https://ci.appveyor.com/api/buildjobs/vir8hq6d9an271p0/artifacts/_build/output/EventGhost_WIP-2019.01.07-20.01.53_Setup.exe) - [[#115]](https://github.com/topic2k/EventGhost/pull/115) Scheduled weekly dependency update for week 01
 * [EventGhost WIP-2018.12.31-19.41.31](https://ci.appveyor.com/api/buildjobs/826dv12an52aqqjo/artifacts/_build/output/EventGhost_WIP-2018.12.31-19.41.31_Setup.exe) - [[#114]](https://github.com/topic2k/EventGhost/pull/114) Scheduled weekly dependency update for week 52
 * [EventGhost ](https://ci.appveyor.com/api/buildjobs/vxc3umw066kdvc4h/artifacts/_build/output/) - [[#107]](https://github.com/topic2k/EventGhost/pull/107) Scheduled weekly dependency update for week 46
@@ -63,7 +64,6 @@
 * [EventGhost WIP-2018.10.22-21.06.08](https://ci.appveyor.com/api/buildjobs/l1pv7vsu30h60n62/artifacts/_build/output/EventGhost_WIP-2018.10.22-21.06.08_Setup.exe) - [[#103]](https://github.com/topic2k/EventGhost/pull/103) Scheduled weekly dependency update for week 42
 * [EventGhost WIP-2018.10.15-19.05.15](https://ci.appveyor.com/api/buildjobs/i64kyaqs5cfp2lop/artifacts/_build/output/EventGhost_WIP-2018.10.15-19.05.15_Setup.exe) - [[#102]](https://github.com/topic2k/EventGhost/pull/102) Scheduled weekly dependency update for week 41
 * [EventGhost WIP-2018.10.10-14.03.59](https://ci.appveyor.com/api/buildjobs/m9y9yyo88n1brsiq/artifacts/_build/output/EventGhost_WIP-2018.10.10-14.03.59_Setup.exe) - [[#101]](https://github.com/topic2k/EventGhost/pull/101) Scheduled daily dependency update on wednesday
-* [EventGhost WIP-2018.10.09-14.07.53](https://ci.appveyor.com/api/buildjobs/n2n99u9fs3a60wij/artifacts/_build/output/EventGhost_WIP-2018.10.09-14.07.53_Setup.exe) - [[#100]](https://github.com/topic2k/EventGhost/pull/100) Scheduled daily dependency update on tuesday
 
 [//]: # (END wip_pr)
 
