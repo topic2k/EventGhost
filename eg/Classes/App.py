@@ -64,8 +64,8 @@ class App(wx.App):
             return False
         if eg.pyCrustFrame:
             eg.pyCrustFrame.Close()
-        eg.document.Close()
         eg.taskBarIcon.Close()
+        eg.document.Close()
         if not eg.startupArguments.translate:
             def DoOnClose():
                 eg.PrintDebugNotice("Triggering OnClose")
