@@ -2188,7 +2188,7 @@ def piltoimage(pil, hasAlpha):
     rgbPil = pil.convert('RGB')
     if hasAlpha:
         image.SetData(rgbPil.tobytes())
-        image.SetAlphaData(pil.convert("RGBA").tobytes()[3::4])
+        image.SetAlpha(pil.convert("RGBA").tobytes()[3::4])
     else:
         new_image = rgbPil
         data = new_image.tobytes()
